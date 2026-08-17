@@ -1,0 +1,61 @@
+{% extends "base_tenant.html" %}
+
+{% block title %}Book Appointment — {{ current_hospital.name }}{% endblock %}
+{% block topbar_title %}<h1 class="font-display text-lg font-bold text-brand-950">Book Appointment</h1>{% endblock %}
+
+{% block content %}
+<div class="mx-auto max-w-2xl">
+  <div class="rounded-2xl border border-brand-900/10 bg-white p-8" x-data="{ selectedPatientId: '', selectedPatientLabel: '', selectedTime: '', selectedTimeLabel: '' }">
+    <h2 class="font-display text-xl font-bold text-brand-950">Book an appointment</h2>
+
+    {% if form.non_field_errors %}
+    <div class="mt-6 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+      {% for error in form.non_field_errors %}<p>{{ error }}</p>{% endfor %}
+    </div>
+    {% endif %}
+
+    <form method="post" class="mt-6 space-y-5">
+      {% csrf_token %}
+      {{ form.patient_id }}
+      {{ form.start_time }}
+
+      <div>
+        <label class="block text-sm font-medium text-brand-900">Patient</label>
+        <div x-show="!selectedPatientId">
+          <input type="text" placeholder="Search by name, phone or MRN"
+            hx-get="{% url 'appointments:patient_search' %}" hx-trigger="keyup changed delay:300ms" hx-target="#patient-results"
+            class="w-full" autocomplete="off" />
+          <div id="patient-results" class="mt-2"></div>
+        </div>
+        <div x-show="selectedPatientId" x-cloak class="flex items-center justify-between rounded-lg border border-brand-200 bg-brand-50 px-3.5 py-2.5">
+          <span x-text="selectedPatientLabel" class="text-sm font-medium text-brand-900"></span>
+          <button type="button" @click="selectedPatientId = ''; selectedPatientLabel = ''" class="text-xs font-semibold text-brand-700 underline">Change</button>
+        </div>
+        {% for error in form.patient_id.errors %}<p class="mt-1 text-xs font-medium text-red-600">{{ error }}</p>{% endfor %}
+      </div>
+
+      <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+        {% include "components/form_field.html" with field=form.doctor %}
+        {% include "components/form_field.html" with field=form.appointment_date %}
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium text-brand-900">Time slot</label>
+        <div id="slot-picker" class="mt-2">
+          <p class="text-sm text-brand-900/40">Select a doctor and date to see available slots.</p>
+        </div>
+        {% for error in form.start_time.errors %}<p class="mt-1 text-xs font-medium text-red-600">{{ error }}</p>{% endfor %}
+      </div>
+
+      {% include "components/form_field.html" with field=form.reason %}
+
+      <div class="flex items-center gap-3 border-t border-brand-900/10 pt-6">
+        <button type="submit" :disabled="!selectedPatientId || !selectedTime" :class="(!selectedPatientId || !selectedTime) && 'opacity-40 cursor-not-allowed'" class="rounded-lg bg-accent-500 px-5 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-accent-600">
+          Book appointment
+        </button>
+        <a href="{% url 'appointments:queue' %}" class="text-sm font-semibold text-brand-900/60 hover:text-brand-900">Cancel</a>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

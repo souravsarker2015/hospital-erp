@@ -3,12 +3,10 @@ from django.shortcuts import redirect
 from django.views.generic import CreateView, DetailView, ListView, UpdateView
 
 from apps.core.permissions import RoleRequiredMixin, TenantMemberRequiredMixin
+from apps.core.roles import FRONT_DESK_ROLES
 from apps.patients.forms import PatientForm
 from apps.patients.models import Patient
 from apps.patients.services import register_patient
-from apps.users.models import User
-
-FRONT_DESK_ROLES = [User.Role.ADMIN, User.Role.RECEPTIONIST, User.Role.NURSE]
 
 
 class PatientListView(TenantMemberRequiredMixin, ListView):

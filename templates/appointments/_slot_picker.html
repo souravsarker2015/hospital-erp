@@ -1,0 +1,16 @@
+{% if not doctor %}
+<p class="text-sm text-brand-900/40">Select a doctor and date to see available slots.</p>
+{% elif slots %}
+<div class="flex flex-wrap gap-2">
+  {% for slot in slots %}
+  <button type="button"
+    @click="selectedTime = '{{ slot|time:'H:i:s' }}'; selectedTimeLabel = '{{ slot|time:'g:i A' }}'"
+    :class="selectedTime === '{{ slot|time:'H:i:s' }}' ? 'bg-brand-800 text-white border-brand-800' : 'bg-white text-brand-900/70 border-brand-900/15 hover:bg-brand-50'"
+    class="rounded-lg border px-3 py-2 text-sm font-semibold transition">
+    {{ slot|time:"g:i A" }}
+  </button>
+  {% endfor %}
+</div>
+{% else %}
+<p class="text-sm text-brand-900/40">No available slots for this doctor on this date.</p>
+{% endif %}

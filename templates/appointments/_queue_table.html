@@ -1,0 +1,21 @@
+<div class="overflow-x-auto rounded-2xl border border-brand-900/10 bg-white">
+  <table class="min-w-full divide-y divide-brand-900/10 text-sm">
+    <thead class="bg-brand-50/60">
+      <tr>
+        <th class="px-4 py-3 text-left font-semibold text-brand-900/70">Token</th>
+        <th class="px-4 py-3 text-left font-semibold text-brand-900/70">Patient</th>
+        <th class="px-4 py-3 text-left font-semibold text-brand-900/70">Doctor</th>
+        <th class="px-4 py-3 text-left font-semibold text-brand-900/70">Time</th>
+        <th class="px-4 py-3 text-left font-semibold text-brand-900/70">Status</th>
+        <th class="px-4 py-3 text-right font-semibold text-brand-900/70">Actions</th>
+      </tr>
+    </thead>
+    <tbody id="queue-rows" class="divide-y divide-brand-900/5">
+      {% for appointment in appointments %}
+        {% include "appointments/_queue_row.html" %}
+      {% empty %}
+      <tr><td colspan="6" class="px-4 py-10 text-center text-brand-900/40">No appointments for this date.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>

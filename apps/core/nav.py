@@ -6,7 +6,7 @@ ever pointing at a URL that doesn't exist yet."""
 TENANT_NAV_ITEMS = [
     {"label": "Dashboard", "icon": "layout-dashboard", "namespace": "dashboard", "url_name": "dashboard:home"},
     {"label": "Patients", "icon": "users-round", "namespace": "patients", "url_name": "patients:list"},
-    {"label": "Appointments", "icon": "calendar-clock", "namespace": "appointments", "url_name": None},
+    {"label": "Appointments", "icon": "calendar-clock", "namespace": "appointments", "url_name": "appointments:queue"},
     {"label": "Clinical", "icon": "stethoscope", "namespace": "clinical", "url_name": None},
     {"label": "Pharmacy", "icon": "pill", "namespace": "pharmacy", "url_name": None},
     {"label": "Lab", "icon": "flask-conical", "namespace": "lab", "url_name": None},
