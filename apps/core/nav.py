@@ -11,5 +11,5 @@ TENANT_NAV_ITEMS = [
     {"label": "Pharmacy", "icon": "pill", "namespace": "pharmacy", "url_name": "pharmacy:drug_list"},
     {"label": "Lab", "icon": "flask-conical", "namespace": "lab", "url_name": "lab:test_list"},
     {"label": "Billing", "icon": "receipt", "namespace": "billing", "url_name": "billing:invoice_list"},
-    {"label": "Wards", "icon": "bed-double", "namespace": "wards", "url_name": None},
+    {"label": "Wards", "icon": "bed-double", "namespace": "wards", "url_name": "wards:board"},
 ]

@@ -1,0 +1,56 @@
+{% extends "base_tenant.html" %}
+
+{% block title %}Manage Wards — {{ current_hospital.name }}{% endblock %}
+{% block topbar_title %}<h1 class="font-display text-lg font-bold text-brand-950">Manage Wards</h1>{% endblock %}
+
+{% block content %}
+<div class="flex items-center justify-between">
+  <div>
+    <h2 class="font-display text-2xl font-bold text-brand-950">Wards</h2>
+    <p class="mt-1 text-sm text-brand-900/60">Set up wards, then drill in to add rooms and beds.</p>
+  </div>
+  <a href="{% url 'wards:board' %}" class="text-sm font-semibold text-brand-700 underline">&larr; Back to board</a>
+</div>
+
+<div class="mt-8 grid grid-cols-1 gap-6 lg:grid-cols-3">
+  <div class="overflow-x-auto rounded-2xl border border-brand-900/10 bg-white lg:col-span-2">
+    <table class="min-w-full divide-y divide-brand-900/10 text-sm">
+      <thead class="bg-brand-50/60">
+        <tr>
+          <th class="px-4 py-3 text-left font-semibold text-brand-900/70">Ward</th>
+          <th class="px-4 py-3 text-left font-semibold text-brand-900/70">Type</th>
+          <th class="px-4 py-3 text-left font-semibold text-brand-900/70">Rooms</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-brand-900/5">
+        {% for ward in wards_list %}
+        <tr class="cursor-pointer hover:bg-brand-50/40" onclick="window.location='{% url 'wards:ward_detail' ward.pk %}'">
+          <td class="px-4 py-3 font-medium text-brand-950">{{ ward.name }}</td>
+          <td class="px-4 py-3 text-brand-900/70">{{ ward.get_ward_type_display }}</td>
+          <td class="px-4 py-3 text-brand-900/70">{{ ward.rooms.count }}</td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="3" class="px-4 py-10 text-center text-brand-900/40">No wards yet.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <div class="rounded-2xl border border-brand-900/10 bg-white p-6">
+    <h3 class="font-display text-sm font-bold text-brand-950">Add a ward</h3>
+    {% if form.non_field_errors %}
+    <div class="mt-4 rounded-lg border border-red-200 bg-red-50 px-3 py-2.5 text-xs text-red-700">
+      {% for error in form.non_field_errors %}<p>{{ error }}</p>{% endfor %}
+    </div>
+    {% endif %}
+    <form method="post" action="{% url 'wards:ward_create' %}" class="mt-4 space-y-4">
+      {% csrf_token %}
+      {% include "components/form_field.html" with field=form.name %}
+      {% include "components/form_field.html" with field=form.ward_type %}
+      <button type="submit" class="w-full rounded-lg bg-accent-500 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-accent-600">
+        Add ward
+      </button>
+    </form>
+  </div>
+</div>
+{% endblock %}

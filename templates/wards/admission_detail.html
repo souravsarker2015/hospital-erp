@@ -1,0 +1,60 @@
+{% extends "base_tenant.html" %}
+
+{% block title %}{{ admission.patient.full_name }} — Admission{% endblock %}
+{% block topbar_title %}<h1 class="font-display text-lg font-bold text-brand-950">Admission</h1>{% endblock %}
+
+{% block content %}
+<div class="mx-auto max-w-2xl">
+  <div class="flex flex-wrap items-start justify-between gap-4">
+    <div>
+      <p class="text-xs font-semibold uppercase tracking-widest text-brand-900/40">{{ admission.bed.room.ward.name }} · Room {{ admission.bed.room.room_number }} · Bed {{ admission.bed.bed_number }}</p>
+      <h2 class="mt-1 font-display text-2xl font-bold text-brand-950">{{ admission.patient.full_name }}</h2>
+      <p class="mt-1 text-sm text-brand-900/60">
+        <a href="{% url 'patients:detail' admission.patient.pk %}" class="hover:underline">{{ admission.patient.mrn }}</a>
+        · Admitted {{ admission.admission_date|date:"M j, Y g:i A" }}
+      </p>
+    </div>
+    <span class="rounded-full px-3 py-1.5 text-xs font-semibold {% if admission.status == 'admitted' %}bg-red-100 text-red-700{% else %}bg-emerald-100 text-emerald-700{% endif %}">
+      {{ admission.get_status_display }}
+    </span>
+  </div>
+
+  <div class="mt-6 rounded-2xl border border-brand-900/10 bg-white p-6">
+    <dl class="grid grid-cols-1 gap-4 text-sm sm:grid-cols-2">
+      <div><dt class="text-brand-900/50">Admitting Doctor</dt><dd class="mt-0.5 font-medium text-brand-900">Dr. {{ admission.admitting_doctor.get_full_name|default:admission.admitting_doctor.username }}</dd></div>
+      <div><dt class="text-brand-900/50">Reason</dt><dd class="mt-0.5 font-medium text-brand-900">{{ admission.reason }}</dd></div>
+      <div><dt class="text-brand-900/50">Nights Stayed</dt><dd class="mt-0.5 font-medium text-brand-900">{{ admission.nights_stayed }}</dd></div>
+      {% if admission.status == "discharged" %}
+      <div><dt class="text-brand-900/50">Discharged</dt><dd class="mt-0.5 font-medium text-brand-900">{{ admission.discharge_date|date:"M j, Y g:i A" }} by {{ admission.discharged_by.get_full_name|default:admission.discharged_by.username }}</dd></div>
+      {% endif %}
+    </dl>
+  </div>
+
+  {% if admission.status == "discharged" %}
+  <div class="mt-6 rounded-2xl border border-brand-900/10 bg-white p-6">
+    <h3 class="font-display text-sm font-bold text-brand-950">Discharge Summary</h3>
+    <p class="mt-3 whitespace-pre-line text-sm text-brand-900/80">{{ admission.discharge_summary }}</p>
+  </div>
+  {% else %}
+  <div class="mt-6 rounded-2xl border border-brand-900/10 bg-white p-6">
+    <h3 class="font-display text-sm font-bold text-brand-950">Discharge Patient</h3>
+
+    {% if form.non_field_errors %}
+    <div class="mt-4 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+      {% for error in form.non_field_errors %}<p>{{ error }}</p>{% endfor %}
+    </div>
+    {% endif %}
+
+    <form method="post" class="mt-4 space-y-4">
+      {% csrf_token %}
+      {% include "components/form_field.html" with field=form.discharge_summary %}
+      <button type="submit" class="rounded-lg bg-accent-500 px-5 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-accent-600">
+        Discharge patient
+      </button>
+    </form>
+  </div>
+  {% endif %}
+
+  <p class="mt-6 text-sm"><a href="{% url 'wards:board' %}" class="font-semibold text-brand-700 underline">&larr; Back to ward board</a></p>
+</div>
+{% endblock %}
