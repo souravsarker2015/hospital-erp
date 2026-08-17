@@ -17,23 +17,85 @@
 {% if widgets %}
 <div class="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
   {% for widget in widgets %}
-  <div class="rounded-2xl border border-brand-900/10 bg-white p-5">
-    <div class="flex items-center justify-between">
-      <span class="flex h-10 w-10 items-center justify-center rounded-xl bg-brand-50 text-brand-700">
-        <i data-lucide="{{ widget.icon }}" class="h-5 w-5"></i>
-      </span>
-    </div>
+  {% if widget.href %}<a href="{{ widget.href }}" class="block rounded-2xl border border-brand-900/10 bg-white p-5 transition hover:shadow-sm">
+  {% else %}<div class="rounded-2xl border border-brand-900/10 bg-white p-5">
+  {% endif %}
+    <span class="flex h-10 w-10 items-center justify-center rounded-xl bg-brand-50 text-brand-700">
+      <i data-lucide="{{ widget.icon }}" class="h-5 w-5"></i>
+    </span>
     <p class="mt-4 text-sm font-medium text-brand-900/60">{{ widget.title }}</p>
-    <p class="mt-1 font-display text-3xl font-bold text-brand-950">—</p>
-  </div>
+    <p class="mt-1 font-display text-3xl font-bold text-brand-950">{{ widget.value }}</p>
+  {% if widget.href %}</a>{% else %}</div>{% endif %}
   {% endfor %}
 </div>
-<p class="mt-6 text-xs text-brand-900/40">
-  These widgets are wired to live data as each module ships — they're placeholders for now, not live figures.
-</p>
 {% else %}
 <div class="mt-8 rounded-2xl border border-brand-900/10 bg-white p-8 text-center">
   <p class="text-sm text-brand-900/60">No dashboard widgets are configured for your role yet.</p>
 </div>
+{% endif %}
+
+{% if revenue_chart or occupancy_chart or status_chart %}
+<div class="mt-8 grid grid-cols-1 gap-6 lg:grid-cols-2">
+  {% if revenue_chart %}
+  <div class="rounded-2xl border border-brand-900/10 bg-white p-6">
+    <h3 class="font-display text-sm font-bold text-brand-950">Revenue — Last 7 Days</h3>
+    <div class="mt-4"><canvas id="revenueChart" height="200"></canvas></div>
+  </div>
+  {{ revenue_chart|json_script:"revenue-chart-data" }}
+  {% endif %}
+
+  {% if occupancy_chart %}
+  <div class="rounded-2xl border border-brand-900/10 bg-white p-6">
+    <h3 class="font-display text-sm font-bold text-brand-950">Bed Occupancy</h3>
+    <div class="mt-4"><canvas id="occupancyChart" height="200"></canvas></div>
+  </div>
+  {{ occupancy_chart|json_script:"occupancy-chart-data" }}
+  {% endif %}
+
+  {% if status_chart %}
+  <div class="rounded-2xl border border-brand-900/10 bg-white p-6 lg:col-span-2">
+    <h3 class="font-display text-sm font-bold text-brand-950">My Appointments Today, by Status</h3>
+    <div class="mt-4"><canvas id="statusChart" height="160"></canvas></div>
+  </div>
+  {{ status_chart|json_script:"status-chart-data" }}
+  {% endif %}
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    if (typeof Chart === 'undefined') return;
+
+    const brand = '#2C7C73', accent = '#ED6F14', gray = '#9CA3AF', brandDark = '#144F49';
+
+    const revenueEl = document.getElementById('revenueChart');
+    if (revenueEl) {
+      const d = JSON.parse(document.getElementById('revenue-chart-data').textContent);
+      new Chart(revenueEl, {
+        type: 'bar',
+        data: { labels: d.labels, datasets: [{ label: 'Revenue', data: d.data, backgroundColor: brand, borderRadius: 6 }] },
+        options: { plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true } } },
+      });
+    }
+
+    const occEl = document.getElementById('occupancyChart');
+    if (occEl) {
+      const d = JSON.parse(document.getElementById('occupancy-chart-data').textContent);
+      new Chart(occEl, {
+        type: 'doughnut',
+        data: { labels: d.labels, datasets: [{ data: d.data, backgroundColor: [accent, brand, gray] }] },
+      });
+    }
+
+    const statusEl = document.getElementById('statusChart');
+    if (statusEl) {
+      const d = JSON.parse(document.getElementById('status-chart-data').textContent);
+      new Chart(statusEl, {
+        type: 'bar',
+        data: { labels: d.labels, datasets: [{ label: 'Appointments', data: d.data, backgroundColor: brandDark, borderRadius: 6 }] },
+        options: { indexAxis: 'y', plugins: { legend: { display: false } }, scales: { x: { beginAtZero: true, ticks: { precision: 0 } } } },
+      });
+    }
+  });
+</script>
 {% endif %}
 {% endblock %}
