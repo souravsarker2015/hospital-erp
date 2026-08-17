@@ -1,0 +1,62 @@
+{% extends "base_tenant.html" %}
+
+{% block title %}Service Catalog — {{ current_hospital.name }}{% endblock %}
+{% block topbar_title %}<h1 class="font-display text-lg font-bold text-brand-950">Service Catalog</h1>{% endblock %}
+
+{% block content %}
+<div class="flex flex-wrap items-center justify-between gap-4">
+  <div>
+    <h2 class="font-display text-2xl font-bold text-brand-950">Service Catalog</h2>
+    <p class="mt-1 text-sm text-brand-900/60">Consultation fees, procedures and other billable items.</p>
+  </div>
+  <div class="flex items-center gap-3">
+    <a href="{% url 'billing:invoice_list' %}" class="inline-flex items-center gap-2 rounded-lg border border-brand-900/15 px-4 py-2.5 text-sm font-semibold text-brand-900 transition hover:bg-brand-50">
+      <i data-lucide="receipt" class="h-4 w-4"></i>
+      Invoices
+    </a>
+    {% if can_manage %}
+    <a href="{% url 'billing:service_create' %}" class="inline-flex items-center gap-2 rounded-lg bg-accent-500 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-accent-600">
+      <i data-lucide="plus" class="h-4 w-4"></i>
+      Add Item
+    </a>
+    {% endif %}
+  </div>
+</div>
+
+<div class="mt-6 overflow-x-auto rounded-2xl border border-brand-900/10 bg-white">
+  <table class="min-w-full divide-y divide-brand-900/10 text-sm">
+    <thead class="bg-brand-50/60">
+      <tr>
+        <th class="px-4 py-3 text-left font-semibold text-brand-900/70">Name</th>
+        <th class="px-4 py-3 text-left font-semibold text-brand-900/70">Category</th>
+        <th class="px-4 py-3 text-left font-semibold text-brand-900/70">Price</th>
+        {% if can_manage %}<th class="px-4 py-3 text-right font-semibold text-brand-900/70">Actions</th>{% endif %}
+      </tr>
+    </thead>
+    <tbody class="divide-y divide-brand-900/5">
+      {% for service in services %}
+      <tr class="hover:bg-brand-50/40">
+        <td class="px-4 py-3 font-medium text-brand-950">{{ service.name }}</td>
+        <td class="px-4 py-3 text-brand-900/70">{{ service.get_category_display }}</td>
+        <td class="px-4 py-3 font-semibold text-brand-900">${{ service.price }}</td>
+        {% if can_manage %}
+        <td class="px-4 py-3 text-right"><a href="{% url 'billing:service_update' service.pk %}" class="text-xs font-semibold text-brand-700 underline">Edit</a></td>
+        {% endif %}
+      </tr>
+      {% empty %}
+      <tr><td colspan="4" class="px-4 py-10 text-center text-brand-900/40">No service items yet.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+{% if is_paginated %}
+<div class="mt-4 flex items-center justify-between text-sm text-brand-900/60">
+  <span>Page {{ page_obj.number }} of {{ paginator.num_pages }}</span>
+  <div class="flex gap-2">
+    {% if page_obj.has_previous %}<a href="?page={{ page_obj.previous_page_number }}" class="rounded-lg border border-brand-900/15 px-3 py-1.5 font-semibold hover:bg-brand-50">Previous</a>{% endif %}
+    {% if page_obj.has_next %}<a href="?page={{ page_obj.next_page_number }}" class="rounded-lg border border-brand-900/15 px-3 py-1.5 font-semibold hover:bg-brand-50">Next</a>{% endif %}
+  </div>
+</div>
+{% endif %}
+{% endblock %}

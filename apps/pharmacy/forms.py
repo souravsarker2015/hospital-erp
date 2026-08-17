@@ -7,7 +7,7 @@ from apps.pharmacy.models import Drug, StockBatch
 class DrugForm(forms.ModelForm):
     class Meta:
         model = Drug
-        fields = ["name", "generic_name", "strength", "unit", "low_stock_threshold"]
+        fields = ["name", "generic_name", "strength", "unit", "low_stock_threshold", "unit_price"]
 
 
 class StockInForm(forms.ModelForm):

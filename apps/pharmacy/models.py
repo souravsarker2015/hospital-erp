@@ -24,6 +24,7 @@ class Drug(TenantScopedModel):
     strength = models.CharField(max_length=50, blank=True, help_text="e.g. 500mg")
     unit = models.CharField(max_length=20, choices=Unit.choices, default=Unit.TABLET)
     low_stock_threshold = models.PositiveIntegerField(default=20)
+    unit_price = models.DecimalField(max_digits=10, decimal_places=2, default=0, help_text="Price per unit dispensed")
 
     class Meta:
         ordering = ["name"]

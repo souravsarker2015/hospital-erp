@@ -1,0 +1,21 @@
+{% extends "base_tenant.html" %}
+
+{% block title %}Billing Queue — {{ current_hospital.name }}{% endblock %}
+{% block topbar_title %}<h1 class="font-display text-lg font-bold text-brand-950">Billing Queue</h1>{% endblock %}
+
+{% block content %}
+<div>
+  <h2 class="font-display text-2xl font-bold text-brand-950">Billing Queue</h2>
+  <p class="mt-1 text-sm text-brand-900/60">Completed visits waiting to be invoiced.</p>
+</div>
+
+<input
+  type="search" name="q" value="{{ current_q }}" placeholder="Search by patient name or MRN"
+  hx-get="{% url 'billing:queue' %}" hx-trigger="keyup changed delay:400ms, search"
+  hx-target="#billing-queue-table" hx-push-url="true"
+  class="mt-6 w-full max-w-md" />
+
+<div id="billing-queue-table" class="mt-6">
+  {% include "billing/_queue_table.html" %}
+</div>
+{% endblock %}

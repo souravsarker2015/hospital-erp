@@ -1,0 +1,45 @@
+{% extends "base_tenant.html" %}
+
+{% block title %}Billing — {{ current_hospital.name }}{% endblock %}
+{% block topbar_title %}<h1 class="font-display text-lg font-bold text-brand-950">Billing</h1>{% endblock %}
+
+{% block content %}
+<div class="flex flex-wrap items-center justify-between gap-4">
+  <div>
+    <h2 class="font-display text-2xl font-bold text-brand-950">Invoices</h2>
+    <p class="mt-1 text-sm text-brand-900/60">{{ paginator.count }} invoice{{ paginator.count|pluralize }}</p>
+  </div>
+  <div class="flex items-center gap-3">
+    <a href="{% url 'billing:service_list' %}" class="inline-flex items-center gap-2 rounded-lg border border-brand-900/15 px-4 py-2.5 text-sm font-semibold text-brand-900 transition hover:bg-brand-50">
+      <i data-lucide="list" class="h-4 w-4"></i>
+      Service Catalog
+    </a>
+    {% if can_manage %}
+    <a href="{% url 'billing:queue' %}" class="inline-flex items-center gap-2 rounded-lg bg-accent-500 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-accent-600">
+      <i data-lucide="clipboard-list" class="h-4 w-4"></i>
+      Billing Queue
+    </a>
+    {% endif %}
+  </div>
+</div>
+
+<form class="mt-6 flex flex-wrap gap-3">
+  <input
+    type="search" name="q" value="{{ current_q }}" placeholder="Search by invoice # or patient"
+    hx-get="{% url 'billing:invoice_list' %}" hx-trigger="keyup changed delay:400ms, search"
+    hx-target="#invoice-table" hx-push-url="true" hx-include="closest form"
+    class="min-w-[16rem] flex-1" />
+  <select
+    name="status"
+    hx-get="{% url 'billing:invoice_list' %}" hx-trigger="change" hx-target="#invoice-table" hx-push-url="true" hx-include="closest form">
+    <option value="">All statuses</option>
+    {% for value, label in status_choices %}
+    <option value="{{ value }}" {% if value == current_status %}selected{% endif %}>{{ label }}</option>
+    {% endfor %}
+  </select>
+</form>
+
+<div id="invoice-table" class="mt-6">
+  {% include "billing/_invoice_table.html" %}
+</div>
+{% endblock %}

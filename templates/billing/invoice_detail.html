@@ -1,0 +1,118 @@
+{% extends "base_tenant.html" %}
+
+{% block title %}Invoice {{ invoice.invoice_number }} — {{ current_hospital.name }}{% endblock %}
+{% block topbar_title %}<h1 class="font-display text-lg font-bold text-brand-950">Invoice</h1>{% endblock %}
+
+{% block content %}
+<div class="mx-auto max-w-3xl">
+  <div class="flex flex-wrap items-start justify-between gap-4">
+    <div>
+      <p class="text-xs font-semibold uppercase tracking-widest text-brand-900/40">Invoice</p>
+      <h2 class="mt-1 font-display text-2xl font-bold text-brand-950">{{ invoice.invoice_number }}</h2>
+      <p class="mt-1 text-sm text-brand-900/60">
+        <a href="{% url 'patients:detail' invoice.patient.pk %}" class="hover:underline">{{ invoice.patient.full_name }}</a>
+        · {{ invoice.patient.mrn }} · {{ invoice.created_at|date:"M j, Y" }}
+      </p>
+    </div>
+    <div class="flex items-center gap-3">
+      <span class="rounded-full px-3 py-1.5 text-xs font-semibold
+        {% if invoice.status == 'paid' %}bg-emerald-100 text-emerald-700
+        {% elif invoice.status == 'partially_paid' %}bg-accent-100 text-accent-700
+        {% elif invoice.status == 'cancelled' %}bg-gray-100 text-gray-600
+        {% else %}bg-red-100 text-red-700{% endif %}">
+        {{ invoice.get_status_display }}
+      </span>
+      <a href="{% url 'billing:print' invoice.pk %}" target="_blank" class="inline-flex items-center gap-2 rounded-lg border border-brand-900/15 px-4 py-2.5 text-sm font-semibold text-brand-900 transition hover:bg-brand-50">
+        <i data-lucide="printer" class="h-4 w-4"></i>
+        Print
+      </a>
+    </div>
+  </div>
+
+  <div class="mt-8 overflow-x-auto rounded-2xl border border-brand-900/10 bg-white">
+    <table class="min-w-full divide-y divide-brand-900/10 text-sm">
+      <thead class="bg-brand-50/60">
+        <tr>
+          <th class="px-4 py-3 text-left font-semibold text-brand-900/70">Type</th>
+          <th class="px-4 py-3 text-left font-semibold text-brand-900/70">Description</th>
+          <th class="px-4 py-3 text-right font-semibold text-brand-900/70">Qty</th>
+          <th class="px-4 py-3 text-right font-semibold text-brand-900/70">Unit Price</th>
+          <th class="px-4 py-3 text-right font-semibold text-brand-900/70">Total</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-brand-900/5">
+        {% for item in invoice.line_items.all %}
+        <tr>
+          <td class="px-4 py-3">
+            <span class="rounded-full bg-brand-100 px-2 py-0.5 text-xs font-semibold text-brand-700">{{ item.get_item_type_display }}</span>
+          </td>
+          <td class="px-4 py-3 text-brand-900">{{ item.description }}</td>
+          <td class="px-4 py-3 text-right text-brand-900/70">{{ item.quantity }}</td>
+          <td class="px-4 py-3 text-right text-brand-900/70">${{ item.unit_price }}</td>
+          <td class="px-4 py-3 text-right font-semibold text-brand-900">${{ item.line_total }}</td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="5" class="px-4 py-8 text-center text-brand-900/40">No line items yet.</td></tr>
+        {% endfor %}
+      </tbody>
+      <tfoot>
+        <tr class="border-t border-brand-900/10">
+          <td colspan="4" class="px-4 py-2.5 text-right text-sm font-semibold text-brand-900/60">Total</td>
+          <td class="px-4 py-2.5 text-right font-display text-base font-bold text-brand-950">${{ invoice.total_amount }}</td>
+        </tr>
+        <tr>
+          <td colspan="4" class="px-4 py-1 text-right text-sm text-brand-900/60">Paid</td>
+          <td class="px-4 py-1 text-right text-sm text-emerald-600">${{ invoice.amount_paid }}</td>
+        </tr>
+        <tr>
+          <td colspan="4" class="px-4 py-1 text-right text-sm font-semibold text-brand-900/60">Due</td>
+          <td class="px-4 py-1 text-right text-sm font-bold {% if invoice.amount_due > 0 %}text-red-600{% else %}text-emerald-600{% endif %}">${{ invoice.amount_due }}</td>
+        </tr>
+      </tfoot>
+    </table>
+  </div>
+
+  {% if can_manage %}
+  <div class="mt-6 rounded-2xl border border-brand-900/10 bg-white p-6">
+    <h3 class="font-display text-sm font-bold text-brand-950">Add Line Item</h3>
+    <form method="post" action="{% url 'billing:add_line_item' invoice.pk %}" class="mt-4 flex flex-wrap items-end gap-3">
+      {% csrf_token %}
+      <div class="min-w-[12rem] flex-1">{% include "components/form_field.html" with field=line_item_form.service_item %}</div>
+      <div class="w-24">{% include "components/form_field.html" with field=line_item_form.quantity %}</div>
+      <button type="submit" class="rounded-lg bg-brand-800 px-4 py-2.5 text-sm font-semibold text-white hover:bg-brand-900">Add</button>
+    </form>
+  </div>
+  {% endif %}
+
+  <div class="mt-6 rounded-2xl border border-brand-900/10 bg-white p-6">
+    <h3 class="font-display text-sm font-bold text-brand-950">Payments</h3>
+    <div class="mt-4 divide-y divide-brand-900/5">
+      {% for payment in invoice.payments.all %}
+      <div class="flex items-center justify-between py-2.5 text-sm">
+        <div>
+          <span class="font-medium text-brand-900">{{ payment.get_method_display }}</span>
+          {% if payment.reference %}<span class="text-brand-900/40"> · {{ payment.reference }}</span>{% endif %}
+          <p class="text-xs text-brand-900/40">{{ payment.created_at|date:"M j, Y g:i A" }} · {{ payment.received_by.get_full_name|default:payment.received_by.username }}</p>
+        </div>
+        <span class="font-semibold text-emerald-600">${{ payment.amount }}</span>
+      </div>
+      {% empty %}
+      <p class="py-2 text-sm text-brand-900/40">No payments recorded yet.</p>
+      {% endfor %}
+    </div>
+
+    {% if can_manage and invoice.amount_due > 0 %}
+    <form method="post" action="{% url 'billing:record_payment' invoice.pk %}" class="mt-4 flex flex-wrap items-end gap-3 border-t border-brand-900/10 pt-4">
+      {% csrf_token %}
+      {% if payment_error %}
+      <p class="w-full text-xs font-medium text-red-600">{{ payment_error }}</p>
+      {% endif %}
+      <div>{% include "components/form_field.html" with field=payment_form.method %}</div>
+      <div class="w-32">{% include "components/form_field.html" with field=payment_form.amount %}</div>
+      <div class="min-w-[10rem] flex-1">{% include "components/form_field.html" with field=payment_form.reference %}</div>
+      <button type="submit" class="rounded-lg bg-accent-500 px-4 py-2.5 text-sm font-semibold text-white hover:bg-accent-600">Record Payment</button>
+    </form>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

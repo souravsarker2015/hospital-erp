@@ -6,7 +6,7 @@ from apps.lab.models import LabResult, LabTest
 class LabTestForm(forms.ModelForm):
     class Meta:
         model = LabTest
-        fields = ["name", "code", "sample_type", "unit", "reference_range"]
+        fields = ["name", "code", "sample_type", "unit", "reference_range", "price"]
 
 
 class CollectSampleForm(forms.Form):

@@ -9,6 +9,7 @@
     <h2 class="font-display text-2xl font-bold text-brand-950">{{ drug.name }} {{ drug.strength }}</h2>
     <p class="mt-1 text-sm text-brand-900/60">
       {{ drug.get_unit_display }}{% if drug.generic_name %} · {{ drug.generic_name }}{% endif %}
+      · ${{ drug.unit_price }}/unit
       · <span class="font-semibold {% if drug.is_low_stock %}text-red-600{% else %}text-emerald-600{% endif %}">{{ drug.total_available_stock }} in stock</span>
     </p>
   </div>

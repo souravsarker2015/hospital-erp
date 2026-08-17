@@ -21,9 +21,10 @@
         {% include "components/form_field.html" with field=form.code %}
       </div>
       {% include "components/form_field.html" with field=form.sample_type %}
-      <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+      <div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
         {% include "components/form_field.html" with field=form.unit %}
         {% include "components/form_field.html" with field=form.reference_range %}
+        {% include "components/form_field.html" with field=form.price %}
       </div>
 
       <div class="flex items-center gap-3 border-t border-brand-900/10 pt-6">

@@ -19,6 +19,7 @@ class LabTest(TenantScopedModel):
     sample_type = models.CharField(max_length=20, choices=SampleType.choices, default=SampleType.BLOOD)
     unit = models.CharField(max_length=50, blank=True, help_text="e.g. mg/dL, x10^9/L")
     reference_range = models.CharField(max_length=100, blank=True, help_text="e.g. 4.5–11.0 x10^9/L")
+    price = models.DecimalField(max_digits=10, decimal_places=2, default=0)
 
     class Meta:
         ordering = ["name"]

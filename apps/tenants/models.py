@@ -64,6 +64,8 @@ class Hospital(models.Model):
     # per-tenant Postgres sequence to lean on, so apps.patients.services
     # increments this under select_for_update() instead.
     last_mrn_number = models.PositiveIntegerField(default=0)
+    # Same pattern, for apps.billing.services invoice numbering.
+    last_invoice_number = models.PositiveIntegerField(default=0)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     is_active = models.BooleanField(default=True)
