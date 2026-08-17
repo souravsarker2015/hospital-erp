@@ -8,7 +8,7 @@ TENANT_NAV_ITEMS = [
     {"label": "Patients", "icon": "users-round", "namespace": "patients", "url_name": "patients:list"},
     {"label": "Appointments", "icon": "calendar-clock", "namespace": "appointments", "url_name": "appointments:queue"},
     {"label": "Clinical", "icon": "stethoscope", "namespace": "clinical", "url_name": None},
-    {"label": "Pharmacy", "icon": "pill", "namespace": "pharmacy", "url_name": None},
+    {"label": "Pharmacy", "icon": "pill", "namespace": "pharmacy", "url_name": "pharmacy:drug_list"},
     {"label": "Lab", "icon": "flask-conical", "namespace": "lab", "url_name": None},
     {"label": "Billing", "icon": "receipt", "namespace": "billing", "url_name": None},
     {"label": "Wards", "icon": "bed-double", "namespace": "wards", "url_name": None},

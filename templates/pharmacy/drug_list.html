@@ -1,0 +1,60 @@
+{% extends "base_tenant.html" %}
+
+{% block title %}Pharmacy — {{ current_hospital.name }}{% endblock %}
+{% block topbar_title %}<h1 class="font-display text-lg font-bold text-brand-950">Pharmacy</h1>{% endblock %}
+
+{% block content %}
+<div class="flex flex-wrap items-center justify-between gap-4">
+  <div>
+    <h2 class="font-display text-2xl font-bold text-brand-950">Drug Inventory</h2>
+    <p class="mt-1 text-sm text-brand-900/60">{{ paginator.count }} drug{{ paginator.count|pluralize }} in the catalog</p>
+  </div>
+  <div class="flex items-center gap-3">
+    <a href="{% url 'pharmacy:dispense_queue' %}" class="inline-flex items-center gap-2 rounded-lg border border-brand-900/15 px-4 py-2.5 text-sm font-semibold text-brand-900 transition hover:bg-brand-50">
+      <i data-lucide="clipboard-list" class="h-4 w-4"></i>
+      Dispense Queue
+    </a>
+    {% if can_manage %}
+    <a href="{% url 'pharmacy:drug_create' %}" class="inline-flex items-center gap-2 rounded-lg bg-accent-500 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-accent-600">
+      <i data-lucide="plus" class="h-4 w-4"></i>
+      Add Drug
+    </a>
+    {% endif %}
+  </div>
+</div>
+
+<div class="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2">
+  <a href="?filter=low_stock"
+    class="flex items-center gap-3 rounded-2xl border p-5 transition hover:shadow-sm {% if current_filter == 'low_stock' %}border-red-300 bg-red-50{% else %}border-brand-900/10 bg-white{% endif %}">
+    <span class="flex h-11 w-11 items-center justify-center rounded-xl bg-red-100 text-red-600"><i data-lucide="triangle-alert" class="h-5 w-5"></i></span>
+    <div>
+      <p class="font-display text-2xl font-bold text-brand-950">{{ low_stock_count }}</p>
+      <p class="text-sm text-brand-900/60">Low on stock</p>
+    </div>
+  </a>
+  <a href="?filter=expiring"
+    class="flex items-center gap-3 rounded-2xl border p-5 transition hover:shadow-sm {% if current_filter == 'expiring' %}border-accent-300 bg-accent-50{% else %}border-brand-900/10 bg-white{% endif %}">
+    <span class="flex h-11 w-11 items-center justify-center rounded-xl bg-accent-100 text-accent-700"><i data-lucide="calendar-clock" class="h-5 w-5"></i></span>
+    <div>
+      <p class="font-display text-2xl font-bold text-brand-950">{{ expiring_count }}</p>
+      <p class="text-sm text-brand-900/60">Expiring within 30 days</p>
+    </div>
+  </a>
+</div>
+
+<div class="mt-6 flex flex-wrap items-center gap-3">
+  <input
+    type="search" name="q" value="{{ current_q }}" placeholder="Search by drug or generic name"
+    hx-get="{% url 'pharmacy:drug_list' %}" hx-trigger="keyup changed delay:400ms, search"
+    hx-target="#drug-table" hx-push-url="true" hx-include="[name='filter']"
+    class="w-full max-w-md" />
+  {% if current_filter %}
+  <a href="{% url 'pharmacy:drug_list' %}" class="text-xs font-semibold text-brand-700 underline">Clear filter</a>
+  <input type="hidden" name="filter" value="{{ current_filter }}" />
+  {% endif %}
+</div>
+
+<div id="drug-table" class="mt-6">
+  {% include "pharmacy/_drug_table.html" %}
+</div>
+{% endblock %}

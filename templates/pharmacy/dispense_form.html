@@ -1,0 +1,44 @@
+{% extends "base_tenant.html" %}
+
+{% block title %}Dispense — {{ item.consultation.appointment.patient.full_name }}{% endblock %}
+{% block topbar_title %}<h1 class="font-display text-lg font-bold text-brand-950">Dispense</h1>{% endblock %}
+
+{% block content %}
+<div class="mx-auto max-w-xl">
+  <div class="rounded-2xl border border-brand-900/10 bg-white p-8">
+    <p class="text-xs font-semibold uppercase tracking-widest text-brand-900/40">
+      {{ item.consultation.appointment.patient.full_name }} · {{ item.consultation.appointment.patient.mrn }}
+    </p>
+    <h2 class="mt-1 font-display text-xl font-bold text-brand-950">{{ item.drug_name }}</h2>
+    <p class="mt-1 text-sm text-brand-900/60">{{ item.dosage }} · {{ item.frequency }} · {{ item.duration }}{% if item.instructions %} · {{ item.instructions }}{% endif %}</p>
+
+    {% if form.non_field_errors %}
+    <div class="mt-6 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+      {% for error in form.non_field_errors %}<p>{{ error }}</p>{% endfor %}
+    </div>
+    {% endif %}
+
+    <form method="post" class="mt-6 space-y-4">
+      {% csrf_token %}
+      {% include "components/form_field.html" with field=form.drug %}
+
+      <div id="batch-field">
+        <label for="id_batch" class="block text-sm font-medium text-brand-900">Batch</label>
+        <select name="batch" id="id_batch">
+          <option value="">Select a drug first</option>
+        </select>
+        {% for error in form.batch.errors %}<p class="mt-1 text-xs font-medium text-red-600">{{ error }}</p>{% endfor %}
+      </div>
+
+      {% include "components/form_field.html" with field=form.quantity %}
+
+      <div class="flex items-center gap-3 border-t border-brand-900/10 pt-6">
+        <button type="submit" class="rounded-lg bg-accent-500 px-5 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-accent-600">
+          Dispense
+        </button>
+        <a href="{% url 'pharmacy:dispense_queue' %}" class="text-sm font-semibold text-brand-900/60 hover:text-brand-900">Cancel</a>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

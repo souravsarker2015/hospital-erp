@@ -1,0 +1,10 @@
+<div id="batch-field">
+  <label for="id_batch" class="block text-sm font-medium text-brand-900">Batch</label>
+  <select name="batch" id="id_batch">
+    <option value="">Select a batch</option>
+    {% for batch in batches %}
+    <option value="{{ batch.pk }}">{{ batch.batch_number }} — exp {{ batch.expiry_date|date:"M j, Y" }} — {{ batch.quantity_remaining }} left</option>
+    {% endfor %}
+  </select>
+  {% if not batches %}<p class="mt-1 text-xs text-brand-900/40">No stock available for this drug.</p>{% endif %}
+</div>

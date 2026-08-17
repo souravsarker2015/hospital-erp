@@ -12,6 +12,9 @@ VITALS_ROLES = [User.Role.ADMIN, User.Role.NURSE, User.Role.DOCTOR]
 # Can write consultation notes, diagnosis, prescriptions and lab orders.
 CLINICAL_ROLES = [User.Role.ADMIN, User.Role.DOCTOR]
 
+# Can manage the drug catalog, receive stock, and dispense against prescriptions.
+PHARMACY_ROLES = [User.Role.ADMIN, User.Role.PHARMACIST]
+
 # Every hospital-side working role — excludes PATIENT, reserved for the
 # later patient-portal phase. Used for broad read access (e.g. printing a
 # prescription) that isn't sensitive beyond what the viewer's own role
