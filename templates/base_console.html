@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>{% block title %}Wardline{% endblock %}</title>
+  {% include "components/app_assets.html" %}
+</head>
+<body class="min-h-screen bg-paper font-sans text-ink antialiased" x-data hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
+  <header class="border-b border-brand-900/10 bg-white">
+    <div class="mx-auto flex max-w-7xl items-center justify-between px-6 py-4 lg:px-8">
+      <a href="{{ marketing_home_url }}" class="flex items-center gap-2">
+        <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-brand-800 text-paper">
+          <i data-lucide="activity" class="h-5 w-5"></i>
+        </span>
+        <span class="font-display text-lg font-bold tracking-tight text-brand-900">Wardline</span>
+        {% block header_badge %}{% endblock %}
+      </a>
+      {% if request.user.is_authenticated %}
+      <div class="flex items-center gap-4">
+        <span class="text-sm text-brand-900/60">{{ request.user.get_full_name|default:request.user.username }}</span>
+        <a href="{% url 'users:logout' %}" class="rounded-lg border border-brand-900/15 px-3 py-1.5 text-sm font-semibold text-brand-900 transition hover:bg-brand-50">Log out</a>
+      </div>
+      {% endif %}
+    </div>
+  </header>
+
+  <main class="mx-auto max-w-7xl px-6 py-10 lg:px-8">
+    {% block content %}{% endblock %}
+  </main>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => window.lucide && lucide.createIcons());
+    document.addEventListener('alpine:init', () => window.lucide && lucide.createIcons());
+    document.body.addEventListener('htmx:afterSwap', () => window.lucide && lucide.createIcons());
+  </script>
+</body>
+</html>

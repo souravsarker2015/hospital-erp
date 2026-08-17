@@ -1,0 +1,39 @@
+<header x-data="{ mobileOpen: false }" class="sticky top-0 z-50 border-b border-brand-900/10 bg-paper/90 backdrop-blur">
+  <div class="mx-auto flex max-w-7xl items-center justify-between px-6 py-4 lg:px-8">
+    <a href="{% url 'marketing:home' %}" class="flex items-center gap-2">
+      <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-brand-800 text-paper">
+        <i data-lucide="activity" class="h-5 w-5"></i>
+      </span>
+      <span class="font-display text-lg font-bold tracking-tight text-brand-900">Wardline</span>
+    </a>
+
+    <nav class="hidden items-center gap-8 lg:flex">
+      <a href="#features" class="text-sm font-medium text-brand-900/70 transition hover:text-brand-900">Features</a>
+      <a href="#how-it-works" class="text-sm font-medium text-brand-900/70 transition hover:text-brand-900">How it works</a>
+      <a href="#pricing" class="text-sm font-medium text-brand-900/70 transition hover:text-brand-900">Pricing</a>
+      <a href="#faq" class="text-sm font-medium text-brand-900/70 transition hover:text-brand-900">FAQ</a>
+    </nav>
+
+    <div class="hidden items-center gap-3 lg:flex">
+      <a href="{% url 'users:login' %}" class="text-sm font-medium text-brand-900/70 transition hover:text-brand-900">Log in</a>
+      <a href="mailto:sales@wardline.example?subject=Request%20a%20demo" class="rounded-lg border border-brand-900/15 px-4 py-2 text-sm font-semibold text-brand-900 transition hover:border-brand-900/30 hover:bg-brand-50">Request Demo</a>
+      <a href="{% url 'tenants:plan_select' %}" class="rounded-lg bg-accent-500 px-4 py-2 text-sm font-semibold text-white shadow-sm shadow-accent-900/10 transition hover:bg-accent-600">Start Free Trial</a>
+    </div>
+
+    <button @click="mobileOpen = !mobileOpen" class="flex items-center justify-center rounded-lg p-2 text-brand-900 lg:hidden" aria-label="Toggle menu">
+      <i data-lucide="menu" class="h-6 w-6" x-show="!mobileOpen"></i>
+      <i data-lucide="x" class="h-6 w-6" x-show="mobileOpen" x-cloak></i>
+    </button>
+  </div>
+
+  <div x-show="mobileOpen" x-cloak x-transition class="border-t border-brand-900/10 bg-paper px-6 py-4 lg:hidden">
+    <nav class="flex flex-col gap-4">
+      <a href="#features" @click="mobileOpen = false" class="text-sm font-medium text-brand-900/80">Features</a>
+      <a href="#how-it-works" @click="mobileOpen = false" class="text-sm font-medium text-brand-900/80">How it works</a>
+      <a href="#pricing" @click="mobileOpen = false" class="text-sm font-medium text-brand-900/80">Pricing</a>
+      <a href="#faq" @click="mobileOpen = false" class="text-sm font-medium text-brand-900/80">FAQ</a>
+      <a href="{% url 'users:login' %}" class="text-sm font-medium text-brand-900/80">Log in</a>
+      <a href="{% url 'tenants:plan_select' %}" class="rounded-lg bg-accent-500 px-4 py-2 text-center text-sm font-semibold text-white">Start Free Trial</a>
+    </nav>
+  </div>
+</header>

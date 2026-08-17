@@ -1,0 +1,71 @@
+<section id="product" class="mx-auto max-w-7xl px-6 py-24 lg:px-8 lg:py-32" x-data="{ tab: 'opd' }">
+  <div class="reveal mx-auto max-w-2xl text-center" x-intersect.once="$el.classList.add('is-visible')">
+    <span class="text-sm font-semibold uppercase tracking-widest text-accent-600">See it in action</span>
+    <h2 class="mt-3 font-display text-3xl font-bold tracking-tight text-brand-950 md:text-4xl">
+      A screen for every part of the shift
+    </h2>
+  </div>
+
+  <div class="reveal mt-12 flex flex-wrap justify-center gap-2" x-intersect.once="$el.classList.add('is-visible')">
+    <button @click="tab = 'opd'" :class="tab === 'opd' ? 'bg-brand-900 text-white' : 'bg-white text-brand-900/60 hover:bg-brand-50'" class="rounded-lg px-4 py-2.5 text-sm font-semibold transition">OPD Queue</button>
+    <button @click="tab = 'pharmacy'" :class="tab === 'pharmacy' ? 'bg-brand-900 text-white' : 'bg-white text-brand-900/60 hover:bg-brand-50'" class="rounded-lg px-4 py-2.5 text-sm font-semibold transition">Pharmacy</button>
+    <button @click="tab = 'billing'" :class="tab === 'billing' ? 'bg-brand-900 text-white' : 'bg-white text-brand-900/60 hover:bg-brand-50'" class="rounded-lg px-4 py-2.5 text-sm font-semibold transition">Billing</button>
+    <button @click="tab = 'ward'" :class="tab === 'ward' ? 'bg-brand-900 text-white' : 'bg-white text-brand-900/60 hover:bg-brand-50'" class="rounded-lg px-4 py-2.5 text-sm font-semibold transition">Ward Board</button>
+  </div>
+
+  <div class="mt-8 overflow-hidden rounded-2xl border border-brand-900/10 bg-white shadow-xl shadow-brand-900/5">
+    <div x-show="tab === 'opd'" x-transition.opacity class="grid grid-cols-1 gap-0 md:grid-cols-3">
+      <div class="border-b border-brand-900/10 p-6 md:col-span-1 md:border-b-0 md:border-r">
+        <h3 class="font-display text-lg font-bold text-brand-950">OPD Queue</h3>
+        <p class="mt-2 text-sm text-brand-900/60">Reception checks patients in against today's appointments; each doctor sees only their own live queue.</p>
+      </div>
+      <div class="divide-y divide-brand-900/5 md:col-span-2">
+        <div class="flex items-center justify-between px-6 py-3.5"><span class="text-sm font-medium text-brand-900">Token #21 — Farhana Yasmin</span><span class="rounded-full bg-emerald-100 px-2.5 py-1 text-xs font-semibold text-emerald-700">In consultation</span></div>
+        <div class="flex items-center justify-between px-6 py-3.5"><span class="text-sm font-medium text-brand-900">Token #22 — Kamal Hossain</span><span class="rounded-full bg-accent-100 px-2.5 py-1 text-xs font-semibold text-accent-700">Checked in</span></div>
+        <div class="flex items-center justify-between px-6 py-3.5"><span class="text-sm font-medium text-brand-900">Token #23 — Nazma Begum</span><span class="rounded-full bg-brand-100 px-2.5 py-1 text-xs font-semibold text-brand-700">Waiting</span></div>
+        <div class="flex items-center justify-between px-6 py-3.5"><span class="text-sm font-medium text-brand-900">Token #24 — Rafiq Islam</span><span class="rounded-full bg-brand-100 px-2.5 py-1 text-xs font-semibold text-brand-700">Waiting</span></div>
+      </div>
+    </div>
+
+    <div x-show="tab === 'pharmacy'" x-cloak x-transition.opacity class="grid grid-cols-1 gap-0 md:grid-cols-3">
+      <div class="border-b border-brand-900/10 p-6 md:col-span-1 md:border-b-0 md:border-r">
+        <h3 class="font-display text-lg font-bold text-brand-950">Pharmacy Stock</h3>
+        <p class="mt-2 text-sm text-brand-900/60">Dispensing against a prescription deducts stock automatically; expiring batches surface before they lapse.</p>
+      </div>
+      <div class="divide-y divide-brand-900/5 md:col-span-2">
+        <div class="flex items-center justify-between px-6 py-3.5"><span class="text-sm font-medium text-brand-900">Paracetamol 500mg</span><span class="rounded-full bg-emerald-100 px-2.5 py-1 text-xs font-semibold text-emerald-700">1,240 in stock</span></div>
+        <div class="flex items-center justify-between px-6 py-3.5"><span class="text-sm font-medium text-brand-900">Amoxicillin 250mg</span><span class="rounded-full bg-red-100 px-2.5 py-1 text-xs font-semibold text-red-700">Low stock — 18 left</span></div>
+        <div class="flex items-center justify-between px-6 py-3.5"><span class="text-sm font-medium text-brand-900">ORS Sachets</span><span class="rounded-full bg-emerald-100 px-2.5 py-1 text-xs font-semibold text-emerald-700">860 in stock</span></div>
+        <div class="flex items-center justify-between px-6 py-3.5"><span class="text-sm font-medium text-brand-900">Insulin Glargine</span><span class="rounded-full bg-accent-100 px-2.5 py-1 text-xs font-semibold text-accent-700">Batch expires in 21 days</span></div>
+      </div>
+    </div>
+
+    <div x-show="tab === 'billing'" x-cloak x-transition.opacity class="grid grid-cols-1 gap-0 md:grid-cols-3">
+      <div class="border-b border-brand-900/10 p-6 md:col-span-1 md:border-b-0 md:border-r">
+        <h3 class="font-display text-lg font-bold text-brand-950">Combined Billing</h3>
+        <p class="mt-2 text-sm text-brand-900/60">Consultation, pharmacy and lab charges land on one invoice — cash, card or insurance, with due tracking.</p>
+      </div>
+      <div class="divide-y divide-brand-900/5 md:col-span-2">
+        <div class="flex items-center justify-between px-6 py-3.5"><span class="text-sm font-medium text-brand-900">Consultation — Dr. Ahmed</span><span class="text-sm text-brand-900/60">৳ 800</span></div>
+        <div class="flex items-center justify-between px-6 py-3.5"><span class="text-sm font-medium text-brand-900">Pharmacy — 3 items</span><span class="text-sm text-brand-900/60">৳ 540</span></div>
+        <div class="flex items-center justify-between px-6 py-3.5"><span class="text-sm font-medium text-brand-900">Lab — CBC, Blood Sugar</span><span class="text-sm text-brand-900/60">৳ 650</span></div>
+        <div class="flex items-center justify-between px-6 py-3.5 bg-brand-50/50"><span class="text-sm font-bold text-brand-900">Total due</span><span class="text-sm font-bold text-brand-900">৳ 1,990</span></div>
+      </div>
+    </div>
+
+    <div x-show="tab === 'ward'" x-cloak x-transition.opacity class="grid grid-cols-1 gap-0 md:grid-cols-3">
+      <div class="border-b border-brand-900/10 p-6 md:col-span-1 md:border-b-0 md:border-r">
+        <h3 class="font-display text-lg font-bold text-brand-950">Ward Board</h3>
+        <p class="mt-2 text-sm text-brand-900/60">Every bed across every ward, at a glance — admit, transfer or discharge without a call to the ward clerk.</p>
+      </div>
+      <div class="grid grid-cols-4 gap-2 p-6 md:col-span-2 sm:grid-cols-6">
+        {% for i in "12345678901234"|make_list %}
+        <div class="flex aspect-square items-center justify-center rounded-lg text-xs font-semibold
+          {% if forloop.counter|divisibleby:4 %}bg-brand-50 text-brand-400{% elif forloop.counter|divisibleby:3 %}bg-accent-100 text-accent-700{% else %}bg-brand-800 text-white{% endif %}">
+          {{ forloop.counter|stringformat:"02d" }}
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</section>

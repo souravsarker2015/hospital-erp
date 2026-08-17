@@ -1,0 +1,54 @@
+{% extends "base_public.html" %}
+
+{% block title %}Register {{ plan.name }} plan — Wardline{% endblock %}
+
+{% block content %}
+<div class="w-full max-w-xl">
+  <div class="rounded-2xl border border-brand-900/10 bg-white p-8 shadow-sm">
+    <div class="flex items-center justify-between">
+      <h1 class="font-display text-2xl font-bold tracking-tight text-brand-950">Set up your hospital</h1>
+      <span class="rounded-full bg-brand-50 px-3 py-1 text-xs font-semibold text-brand-700">{{ plan.name }} plan</span>
+    </div>
+    <p class="mt-2 text-sm text-brand-900/60">14-day free trial, no credit card required. You'll be the first Admin for your hospital.</p>
+
+    {% if form.non_field_errors %}
+    <div class="mt-6 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+      {% for error in form.non_field_errors %}<p>{{ error }}</p>{% endfor %}
+    </div>
+    {% endif %}
+
+    <form method="post" class="mt-6 space-y-5">
+      {% csrf_token %}
+      <div>
+        <h2 class="text-xs font-semibold uppercase tracking-widest text-brand-900/40">Hospital details</h2>
+        <div class="mt-3 space-y-4">
+          {% include "components/form_field.html" with field=form.hospital_name %}
+          {% include "components/form_field.html" with field=form.subdomain %}
+          {% include "components/form_field.html" with field=form.contact_email %}
+        </div>
+      </div>
+
+      <div class="border-t border-brand-900/10 pt-5">
+        <h2 class="text-xs font-semibold uppercase tracking-widest text-brand-900/40">Your admin account</h2>
+        <div class="mt-3 space-y-4">
+          <div class="grid grid-cols-2 gap-4">
+            {% include "components/form_field.html" with field=form.admin_first_name %}
+            {% include "components/form_field.html" with field=form.admin_last_name %}
+          </div>
+          {% include "components/form_field.html" with field=form.admin_username %}
+          {% include "components/form_field.html" with field=form.admin_password1 %}
+          {% include "components/form_field.html" with field=form.admin_password2 %}
+        </div>
+      </div>
+
+      <button type="submit" class="w-full rounded-lg bg-accent-500 px-5 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-accent-600">
+        Create my hospital's workspace
+      </button>
+    </form>
+
+    <p class="mt-4 text-center text-xs text-brand-900/40">
+      <a href="{% url 'tenants:plan_select' %}" class="underline hover:text-brand-900">&larr; Choose a different plan</a>
+    </p>
+  </div>
+</div>
+{% endblock %}

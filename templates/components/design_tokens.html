@@ -1,0 +1,39 @@
+{% load static %}
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          brand: {
+            50: '#EDF6F5', 100: '#D3E8E6', 200: '#A8D1CC', 300: '#78B7AF',
+            400: '#4B9A91', 500: '#2C7C73', 600: '#1C645C', 700: '#144F49',
+            800: '#0F3D38', 900: '#0A2B28', 950: '#061A18',
+          },
+          accent: {
+            50: '#FFF4EA', 100: '#FFE3C7', 200: '#FFC98C', 300: '#FFAA52',
+            400: '#FB8B2B', 500: '#ED6F14', 600: '#C8560D', 700: '#A1420D',
+            800: '#7C3310', 900: '#5E280F',
+          },
+          paper: '#FAF7F1',
+          ink: '#10201E',
+        },
+        fontFamily: {
+          display: ['"Manrope"', 'sans-serif'],
+          sans: ['"Inter"', 'sans-serif'],
+        },
+      },
+    },
+  };
+</script>
+
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js" defer></script>
+<script src="https://unpkg.com/htmx.org@2.0.4" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@alpinejs/intersect@3.x.x/dist/cdn.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+
+<link rel="stylesheet" href="{% static 'marketing/css/marketing.css' %}" />

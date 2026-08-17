@@ -1,0 +1,43 @@
+{% extends "base_console.html" %}
+
+{% block title %}Platform Admin — Hospitals — Wardline{% endblock %}
+{% block header_badge %}<span class="ml-2 rounded-full bg-brand-100 px-2.5 py-0.5 text-xs font-semibold text-brand-700">Platform Admin</span>{% endblock %}
+
+{% block content %}
+<div>
+  <h1 class="font-display text-2xl font-bold text-brand-950">Hospitals</h1>
+  <p class="mt-1 text-sm text-brand-900/60">{{ paginator.count }} hospital{{ paginator.count|pluralize }} on the platform</p>
+</div>
+
+<form class="mt-6 flex flex-wrap gap-3">
+  <input
+    type="text" name="q" value="{{ current_q }}" placeholder="Search name, subdomain or email"
+    hx-get="{% url 'platform_admin:tenant_list' %}" hx-trigger="keyup changed delay:400ms, search"
+    hx-target="#tenant-table" hx-push-url="true" hx-include="closest form"
+    class="min-w-[16rem] flex-1 rounded-lg border border-brand-900/15 bg-white px-3.5 py-2.5 text-sm text-brand-950 placeholder:text-brand-900/30 focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/20" />
+
+  <select
+    name="status"
+    hx-get="{% url 'platform_admin:tenant_list' %}" hx-trigger="change" hx-target="#tenant-table" hx-push-url="true" hx-include="closest form"
+    class="rounded-lg border border-brand-900/15 bg-white px-3.5 py-2.5 text-sm text-brand-950 focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/20">
+    <option value="">All statuses</option>
+    {% for value, label in status_choices %}
+    <option value="{{ value }}" {% if value == current_status %}selected{% endif %}>{{ label }}</option>
+    {% endfor %}
+  </select>
+
+  <select
+    name="plan"
+    hx-get="{% url 'platform_admin:tenant_list' %}" hx-trigger="change" hx-target="#tenant-table" hx-push-url="true" hx-include="closest form"
+    class="rounded-lg border border-brand-900/15 bg-white px-3.5 py-2.5 text-sm text-brand-950 focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/20">
+    <option value="">All plans</option>
+    {% for plan in plans %}
+    <option value="{{ plan.slug }}" {% if plan.slug == current_plan %}selected{% endif %}>{{ plan.name }}</option>
+    {% endfor %}
+  </select>
+</form>
+
+<div id="tenant-table" class="mt-6">
+  {% include "tenants/platform_admin/_tenant_table.html" %}
+</div>
+{% endblock %}

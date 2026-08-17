@@ -1,0 +1,39 @@
+{% extends "base_tenant.html" %}
+
+{% block title %}Dashboard — {{ hospital.name }}{% endblock %}
+{% block topbar_title %}<h1 class="font-display text-lg font-bold text-brand-950">Dashboard</h1>{% endblock %}
+
+{% block content %}
+<div>
+  <h2 class="font-display text-2xl font-bold text-brand-950">
+    Welcome, {{ request.user.first_name|default:request.user.username }}
+  </h2>
+  <p class="mt-1 text-sm text-brand-900/60">
+    You're signed in as <span class="font-semibold text-brand-900">{{ request.user.get_role_display }}</span>
+    at {{ hospital.name }}.
+  </p>
+</div>
+
+{% if widgets %}
+<div class="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+  {% for widget in widgets %}
+  <div class="rounded-2xl border border-brand-900/10 bg-white p-5">
+    <div class="flex items-center justify-between">
+      <span class="flex h-10 w-10 items-center justify-center rounded-xl bg-brand-50 text-brand-700">
+        <i data-lucide="{{ widget.icon }}" class="h-5 w-5"></i>
+      </span>
+    </div>
+    <p class="mt-4 text-sm font-medium text-brand-900/60">{{ widget.title }}</p>
+    <p class="mt-1 font-display text-3xl font-bold text-brand-950">—</p>
+  </div>
+  {% endfor %}
+</div>
+<p class="mt-6 text-xs text-brand-900/40">
+  These widgets are wired to live data as each module ships — they're placeholders for now, not live figures.
+</p>
+{% else %}
+<div class="mt-8 rounded-2xl border border-brand-900/10 bg-white p-8 text-center">
+  <p class="text-sm text-brand-900/60">No dashboard widgets are configured for your role yet.</p>
+</div>
+{% endif %}
+{% endblock %}

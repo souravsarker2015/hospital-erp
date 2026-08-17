@@ -1,0 +1,34 @@
+<tr id="tenant-row-{{ hospital.pk }}" class="hover:bg-brand-50/40">
+  <td class="px-4 py-3 font-medium text-brand-950">{{ hospital.name }}</td>
+  <td class="px-4 py-3 text-brand-900/70">{{ hospital.subdomain }}</td>
+  <td class="px-4 py-3 text-brand-900/70">{{ hospital.plan.name }}</td>
+  <td class="px-4 py-3">
+    <span class="rounded-full px-2.5 py-1 text-xs font-semibold
+      {% if hospital.subscription_status == 'active' %}bg-emerald-100 text-emerald-700
+      {% elif hospital.subscription_status == 'trial' %}bg-accent-100 text-accent-700
+      {% elif hospital.subscription_status == 'suspended' %}bg-red-100 text-red-700
+      {% elif hospital.subscription_status == 'past_due' %}bg-amber-100 text-amber-700
+      {% else %}bg-brand-100 text-brand-700{% endif %}">
+      {{ hospital.get_subscription_status_display }}
+    </span>
+  </td>
+  <td class="px-4 py-3 text-brand-900/50">{{ hospital.created_at|date:"M j, Y" }}</td>
+  <td class="px-4 py-3 text-right">
+    {% if hospital.is_active %}
+    <button
+      hx-post="{% url 'platform_admin:tenant_suspend' hospital.pk %}"
+      hx-target="#tenant-row-{{ hospital.pk }}" hx-swap="outerHTML"
+      hx-confirm="Suspend {{ hospital.name }}? Their staff will be unable to log in."
+      class="rounded-lg border border-red-200 px-3 py-1.5 text-xs font-semibold text-red-700 transition hover:bg-red-50">
+      Suspend
+    </button>
+    {% else %}
+    <button
+      hx-post="{% url 'platform_admin:tenant_activate' hospital.pk %}"
+      hx-target="#tenant-row-{{ hospital.pk }}" hx-swap="outerHTML"
+      class="rounded-lg border border-emerald-200 px-3 py-1.5 text-xs font-semibold text-emerald-700 transition hover:bg-emerald-50">
+      Activate
+    </button>
+    {% endif %}
+  </td>
+</tr>

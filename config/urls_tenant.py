@@ -1,0 +1,10 @@
+"""Tenant urlconf — active whenever CurrentHospitalMiddleware resolves the
+request host to a Hospital. No django.contrib.admin here: platform
+administration is only reachable on the bare PLATFORM_DOMAIN."""
+
+from django.urls import include, path
+
+urlpatterns = [
+    path("accounts/", include("apps.users.urls")),
+    path("", include("apps.dashboard.urls")),
+]

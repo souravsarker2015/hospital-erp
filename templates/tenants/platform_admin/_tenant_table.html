@@ -1,0 +1,45 @@
+<div class="overflow-x-auto rounded-2xl border border-brand-900/10 bg-white">
+  <table class="min-w-full divide-y divide-brand-900/10 text-sm">
+    <thead class="bg-brand-50/60">
+      <tr>
+        <th class="px-4 py-3 text-left font-semibold text-brand-900/70">Hospital</th>
+        <th class="px-4 py-3 text-left font-semibold text-brand-900/70">Subdomain</th>
+        <th class="px-4 py-3 text-left font-semibold text-brand-900/70">Plan</th>
+        <th class="px-4 py-3 text-left font-semibold text-brand-900/70">Status</th>
+        <th class="px-4 py-3 text-left font-semibold text-brand-900/70">Created</th>
+        <th class="px-4 py-3 text-right font-semibold text-brand-900/70">Actions</th>
+      </tr>
+    </thead>
+    <tbody id="tenant-rows" class="divide-y divide-brand-900/5">
+      {% for hospital in hospitals %}
+        {% include "tenants/platform_admin/_tenant_row.html" %}
+      {% empty %}
+      <tr><td colspan="6" class="px-4 py-10 text-center text-brand-900/40">No hospitals match your filters.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+{% if is_paginated %}
+<div class="mt-4 flex items-center justify-between text-sm text-brand-900/60">
+  <span>Page {{ page_obj.number }} of {{ paginator.num_pages }}</span>
+  <div class="flex gap-2">
+    {% if page_obj.has_previous %}
+    <button
+      hx-get="{% url 'platform_admin:tenant_list' %}?page={{ page_obj.previous_page_number }}&q={{ current_q|urlencode }}&status={{ current_status|urlencode }}&plan={{ current_plan|urlencode }}"
+      hx-target="#tenant-table" hx-push-url="true"
+      class="rounded-lg border border-brand-900/15 px-3 py-1.5 font-semibold transition hover:bg-brand-50">
+      Previous
+    </button>
+    {% endif %}
+    {% if page_obj.has_next %}
+    <button
+      hx-get="{% url 'platform_admin:tenant_list' %}?page={{ page_obj.next_page_number }}&q={{ current_q|urlencode }}&status={{ current_status|urlencode }}&plan={{ current_plan|urlencode }}"
+      hx-target="#tenant-table" hx-push-url="true"
+      class="rounded-lg border border-brand-900/15 px-3 py-1.5 font-semibold transition hover:bg-brand-50">
+      Next
+    </button>
+    {% endif %}
+  </div>
+</div>
+{% endif %}

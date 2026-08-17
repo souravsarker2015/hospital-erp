@@ -1,0 +1,22 @@
+<section class="mx-auto max-w-7xl px-6 pb-24 lg:px-8">
+  <div class="reveal relative overflow-hidden rounded-3xl bg-brand-900 px-8 py-16 text-center sm:px-16" x-intersect.once="$el.classList.add('is-visible')">
+    <div class="absolute -top-16 -right-16 h-56 w-56 rounded-full bg-accent-500/20 blur-3xl"></div>
+    <div class="absolute -bottom-16 -left-16 h-56 w-56 rounded-full bg-brand-500/30 blur-3xl"></div>
+    <h2 class="relative font-display text-3xl font-bold tracking-tight text-white md:text-4xl">
+      Ready to run your hospital on one system?
+    </h2>
+    <p class="relative mx-auto mt-4 max-w-xl text-lg text-white/70">
+      Start your 14-day free trial today. No credit card, no implementation project — just your
+      hospital's workspace, ready in minutes.
+    </p>
+    <div class="relative mt-8 flex flex-col items-center justify-center gap-4 sm:flex-row">
+      <a href="{% url 'tenants:plan_select' %}" class="inline-flex items-center justify-center gap-2 rounded-lg bg-accent-500 px-6 py-3.5 text-base font-semibold text-white shadow-lg shadow-accent-900/30 transition hover:bg-accent-600">
+        Start Free Trial
+        <i data-lucide="arrow-right" class="h-4 w-4"></i>
+      </a>
+      <a href="mailto:sales@wardline.example?subject=Request%20a%20demo" class="inline-flex items-center justify-center gap-2 rounded-lg border border-white/20 px-6 py-3.5 text-base font-semibold text-white transition hover:bg-white/10">
+        Request Demo
+      </a>
+    </div>
+  </div>
+</section>

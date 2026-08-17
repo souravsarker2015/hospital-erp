@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>{% block title %}Wardline — Hospital management software for growing clinics{% endblock %}</title>
+  <meta name="description" content="{% block meta_description %}Wardline runs OPD queueing, patient records, pharmacy stock, lab orders and billing from one system — built for clinics and hospitals moving off paper registers.{% endblock %}" />
+  {% include "components/design_tokens.html" %}
+  {% block extra_head %}{% endblock %}
+</head>
+<body class="bg-paper font-sans text-ink antialiased" x-data>
+  {% include "marketing/partials/nav.html" %}
+  <main>
+    {% block content %}{% endblock %}
+  </main>
+  {% include "marketing/partials/footer.html" %}
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => window.lucide && lucide.createIcons());
+    document.addEventListener('alpine:init', () => window.lucide && lucide.createIcons());
+  </script>
+</body>
+</html>
