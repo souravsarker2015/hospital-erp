@@ -1,0 +1,34 @@
+{% extends "base_tenant.html" %}
+
+{% block title %}Vitals — {{ appointment.patient.full_name }}{% endblock %}
+{% block topbar_title %}<h1 class="font-display text-lg font-bold text-brand-950">Record Vitals</h1>{% endblock %}
+
+{% block content %}
+<div class="mx-auto max-w-2xl">
+  <div class="rounded-2xl border border-brand-900/10 bg-white p-8">
+    <p class="text-xs font-semibold uppercase tracking-widest text-brand-900/40">{{ appointment.patient.mrn }} · Token #{{ appointment.token_number }}</p>
+    <h2 class="mt-1 font-display text-xl font-bold text-brand-950">{{ appointment.patient.full_name }}</h2>
+
+    <form method="post" class="mt-6 space-y-5">
+      {% csrf_token %}
+      <div class="grid grid-cols-2 gap-4">
+        {% include "components/form_field.html" with field=form.temperature_celsius %}
+        {% include "components/form_field.html" with field=form.pulse_rate %}
+        {% include "components/form_field.html" with field=form.blood_pressure_systolic %}
+        {% include "components/form_field.html" with field=form.blood_pressure_diastolic %}
+        {% include "components/form_field.html" with field=form.respiratory_rate %}
+        {% include "components/form_field.html" with field=form.spo2_percent %}
+        {% include "components/form_field.html" with field=form.weight_kg %}
+        {% include "components/form_field.html" with field=form.height_cm %}
+      </div>
+
+      <div class="flex items-center gap-3 border-t border-brand-900/10 pt-6">
+        <button type="submit" class="rounded-lg bg-accent-500 px-5 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-accent-600">
+          Save vitals
+        </button>
+        <a href="{% url 'appointments:queue' %}" class="text-sm font-semibold text-brand-900/60 hover:text-brand-900">Cancel</a>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

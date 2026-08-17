@@ -1,0 +1,166 @@
+{% extends "base_tenant.html" %}
+
+{% block title %}Consultation — {{ patient.full_name }}{% endblock %}
+{% block topbar_title %}<h1 class="font-display text-lg font-bold text-brand-950">Consultation</h1>{% endblock %}
+
+{% block content %}
+<div class="mx-auto max-w-4xl">
+  <div class="flex flex-wrap items-start justify-between gap-4">
+    <div class="flex items-center gap-4">
+      <span class="flex h-14 w-14 items-center justify-center rounded-full bg-brand-800 text-lg font-bold text-white">
+        {{ patient.first_name|slice:":1" }}{{ patient.last_name|slice:":1" }}
+      </span>
+      <div>
+        <h2 class="font-display text-2xl font-bold text-brand-950">{{ patient.full_name }}</h2>
+        <p class="mt-1 text-sm text-brand-900/60">
+          MRN <span class="font-mono font-semibold text-brand-700">{{ patient.mrn }}</span>
+          · {% if patient.age %}{{ patient.age }} yrs{% else %}Age unknown{% endif %}
+          · {{ patient.get_gender_display }}
+          · Token #{{ appointment.token_number }}
+        </p>
+      </div>
+    </div>
+    <a href="{% url 'patients:detail' patient.pk %}" class="text-sm font-semibold text-brand-700 underline">View full patient profile</a>
+  </div>
+
+  {% if patient.allergies %}
+  <div class="mt-4 flex items-start gap-2 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+    <i data-lucide="triangle-alert" class="mt-0.5 h-4 w-4 shrink-0"></i>
+    <span><span class="font-semibold">Allergies:</span> {{ patient.allergies }}</span>
+  </div>
+  {% endif %}
+
+  <div class="mt-6 rounded-2xl border border-brand-900/10 bg-white p-6">
+    <div class="flex items-center justify-between">
+      <h3 class="font-display text-sm font-bold text-brand-950">Vitals</h3>
+      <a href="{% url 'clinical:vitals' appointment.pk %}" class="text-xs font-semibold text-brand-700 underline">{% if vitals %}Edit{% else %}Record vitals{% endif %}</a>
+    </div>
+    {% if vitals %}
+    <div class="mt-4 grid grid-cols-2 gap-3 text-sm sm:grid-cols-4">
+      <div><dt class="text-xs text-brand-900/50">Temp</dt><dd class="font-medium text-brand-900">{{ vitals.temperature_celsius|default:"—" }}°C</dd></div>
+      <div><dt class="text-xs text-brand-900/50">BP</dt><dd class="font-medium text-brand-900">{{ vitals.blood_pressure_systolic|default:"—" }}/{{ vitals.blood_pressure_diastolic|default:"—" }}</dd></div>
+      <div><dt class="text-xs text-brand-900/50">Pulse</dt><dd class="font-medium text-brand-900">{{ vitals.pulse_rate|default:"—" }} bpm</dd></div>
+      <div><dt class="text-xs text-brand-900/50">SpO2</dt><dd class="font-medium text-brand-900">{{ vitals.spo2_percent|default:"—" }}%</dd></div>
+      <div><dt class="text-xs text-brand-900/50">Resp. rate</dt><dd class="font-medium text-brand-900">{{ vitals.respiratory_rate|default:"—" }}</dd></div>
+      <div><dt class="text-xs text-brand-900/50">Weight</dt><dd class="font-medium text-brand-900">{{ vitals.weight_kg|default:"—" }} kg</dd></div>
+      <div><dt class="text-xs text-brand-900/50">Height</dt><dd class="font-medium text-brand-900">{{ vitals.height_cm|default:"—" }} cm</dd></div>
+      <div><dt class="text-xs text-brand-900/50">BMI</dt><dd class="font-medium text-brand-900">{{ vitals.bmi|default:"—" }}</dd></div>
+    </div>
+    {% else %}
+    <p class="mt-2 text-sm text-brand-900/40">No vitals recorded yet.</p>
+    {% endif %}
+  </div>
+
+  {% if is_locked %}
+  <div class="mt-6 flex items-center gap-2 rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-700">
+    <i data-lucide="check-circle-2" class="h-4 w-4 shrink-0"></i>
+    This consultation is complete and read-only.
+    <a href="{% url 'clinical:prescription_print' appointment.pk %}" target="_blank" class="ml-auto font-semibold underline">Print prescription</a>
+  </div>
+  {% endif %}
+
+  <form method="post" class="mt-6 space-y-6">
+    {% csrf_token %}
+    <fieldset {% if is_locked %}disabled{% endif %} class="space-y-6">
+      <div class="rounded-2xl border border-brand-900/10 bg-white p-6">
+        <h3 class="font-display text-sm font-bold text-brand-950">Consultation Notes</h3>
+        <div class="mt-4 space-y-4">
+          {% include "components/form_field.html" with field=form.chief_complaint %}
+          <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+            {% include "components/form_field.html" with field=form.history_notes %}
+            {% include "components/form_field.html" with field=form.examination_notes %}
+          </div>
+          <div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
+            <div class="sm:col-span-2">{% include "components/form_field.html" with field=form.diagnosis %}</div>
+            {% include "components/form_field.html" with field=form.icd10_code %}
+          </div>
+          <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+            {% include "components/form_field.html" with field=form.advice %}
+            {% include "components/form_field.html" with field=form.follow_up_date %}
+          </div>
+        </div>
+      </div>
+
+      <div class="rounded-2xl border border-brand-900/10 bg-white p-6">
+        <h3 class="font-display text-sm font-bold text-brand-950">Prescription</h3>
+        {{ prescription_formset.management_form }}
+        {% if prescription_formset.non_form_errors %}
+        <p class="mt-2 text-xs font-medium text-red-600">{{ prescription_formset.non_form_errors }}</p>
+        {% endif %}
+        <div class="mt-4 overflow-x-auto">
+          <table class="min-w-full text-sm">
+            <thead>
+              <tr class="text-left text-xs font-semibold uppercase tracking-wide text-brand-900/40">
+                <th class="pb-2 pr-2">Drug</th>
+                <th class="pb-2 pr-2">Dosage</th>
+                <th class="pb-2 pr-2">Frequency</th>
+                <th class="pb-2 pr-2">Duration</th>
+                <th class="pb-2 pr-2">Instructions</th>
+                {% if not is_locked %}<th class="pb-2"></th>{% endif %}
+              </tr>
+            </thead>
+            <tbody>
+              {% for subform in prescription_formset %}
+              <tr class="align-top">
+                {{ subform.id }}
+                <td class="py-1.5 pr-2">{{ subform.drug_name }}</td>
+                <td class="py-1.5 pr-2">{{ subform.dosage }}</td>
+                <td class="py-1.5 pr-2">{{ subform.frequency }}</td>
+                <td class="py-1.5 pr-2">{{ subform.duration }}</td>
+                <td class="py-1.5 pr-2">{{ subform.instructions }}</td>
+                {% if not is_locked %}
+                <td class="py-1.5">{% if subform.instance.pk %}<label class="flex items-center gap-1 text-xs text-red-600">{{ subform.DELETE }} Remove</label>{% endif %}</td>
+                {% endif %}
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="rounded-2xl border border-brand-900/10 bg-white p-6">
+        <h3 class="font-display text-sm font-bold text-brand-950">Lab Orders</h3>
+        {{ lab_formset.management_form }}
+        {% if lab_formset.non_form_errors %}
+        <p class="mt-2 text-xs font-medium text-red-600">{{ lab_formset.non_form_errors }}</p>
+        {% endif %}
+        <div class="mt-4 overflow-x-auto">
+          <table class="min-w-full text-sm">
+            <thead>
+              <tr class="text-left text-xs font-semibold uppercase tracking-wide text-brand-900/40">
+                <th class="pb-2 pr-2">Test</th>
+                <th class="pb-2 pr-2">Notes</th>
+                {% if not is_locked %}<th class="pb-2"></th>{% endif %}
+              </tr>
+            </thead>
+            <tbody>
+              {% for subform in lab_formset %}
+              <tr class="align-top">
+                {{ subform.id }}
+                <td class="py-1.5 pr-2">{{ subform.test_name }}</td>
+                <td class="py-1.5 pr-2">{{ subform.notes }}</td>
+                {% if not is_locked %}
+                <td class="py-1.5">{% if subform.instance.pk %}<label class="flex items-center gap-1 text-xs text-red-600">{{ subform.DELETE }} Remove</label>{% endif %}</td>
+                {% endif %}
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </fieldset>
+
+    {% if not is_locked %}
+    <div class="flex items-center gap-3">
+      <button type="submit" name="action" value="save" class="rounded-lg border border-brand-900/15 px-5 py-3 text-sm font-semibold text-brand-900 transition hover:bg-brand-50">
+        Save draft
+      </button>
+      <button type="submit" name="action" value="complete" class="rounded-lg bg-accent-500 px-5 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-accent-600">
+        Complete consultation
+      </button>
+      <a href="{% url 'appointments:queue' %}" class="text-sm font-semibold text-brand-900/60 hover:text-brand-900">Back to queue</a>
+    </div>
+    {% endif %}
+  </form>
+</div>
+{% endblock %}

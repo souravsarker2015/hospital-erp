@@ -17,23 +17,32 @@
     </span>
   </td>
   <td class="px-4 py-3 text-right">
-    {% if can_manage_queue %}
-      {% if appointment.status == 'scheduled' %}
-      <div class="inline-flex gap-1.5">
-        <button hx-post="{% url 'appointments:status' appointment.pk %}" hx-vals='{"status": "checked_in"}' hx-target="#appointment-row-{{ appointment.pk }}" hx-swap="outerHTML" class="rounded-lg border border-brand-200 px-2.5 py-1.5 text-xs font-semibold text-brand-700 hover:bg-brand-50">Check In</button>
-        <button hx-post="{% url 'appointments:status' appointment.pk %}" hx-vals='{"status": "no_show"}' hx-target="#appointment-row-{{ appointment.pk }}" hx-swap="outerHTML" class="rounded-lg border border-brand-900/10 px-2.5 py-1.5 text-xs font-semibold text-brand-900/50 hover:bg-brand-50">No-show</button>
-        <button hx-post="{% url 'appointments:status' appointment.pk %}" hx-vals='{"status": "cancelled"}' hx-target="#appointment-row-{{ appointment.pk }}" hx-swap="outerHTML" hx-confirm="Cancel this appointment?" class="rounded-lg border border-red-200 px-2.5 py-1.5 text-xs font-semibold text-red-700 hover:bg-red-50">Cancel</button>
-      </div>
-      {% elif appointment.status == 'checked_in' %}
-      <div class="inline-flex gap-1.5">
-        <button hx-post="{% url 'appointments:status' appointment.pk %}" hx-vals='{"status": "in_consultation"}' hx-target="#appointment-row-{{ appointment.pk }}" hx-swap="outerHTML" class="rounded-lg border border-accent-200 px-2.5 py-1.5 text-xs font-semibold text-accent-700 hover:bg-accent-50">Start Consultation</button>
-        <button hx-post="{% url 'appointments:status' appointment.pk %}" hx-vals='{"status": "cancelled"}' hx-target="#appointment-row-{{ appointment.pk }}" hx-swap="outerHTML" hx-confirm="Cancel this appointment?" class="rounded-lg border border-red-200 px-2.5 py-1.5 text-xs font-semibold text-red-700 hover:bg-red-50">Cancel</button>
-      </div>
-      {% elif appointment.status == 'in_consultation' %}
-      <button hx-post="{% url 'appointments:status' appointment.pk %}" hx-vals='{"status": "completed"}' hx-target="#appointment-row-{{ appointment.pk }}" hx-swap="outerHTML" class="rounded-lg border border-emerald-200 px-2.5 py-1.5 text-xs font-semibold text-emerald-700 hover:bg-emerald-50">Complete</button>
-      {% else %}
-      <span class="text-xs text-brand-900/30">—</span>
+    <div class="inline-flex items-center gap-1.5">
+      {% if can_do_vitals and appointment.status != "completed" and appointment.status != "cancelled" and appointment.status != "no_show" %}
+      <a href="{% url 'clinical:vitals' appointment.pk %}" class="rounded-lg border border-brand-900/10 px-2.5 py-1.5 text-xs font-semibold text-brand-900/60 hover:bg-brand-50">
+        {% if appointment.vitals %}Vitals ✓{% else %}Vitals{% endif %}
+      </a>
       {% endif %}
-    {% endif %}
+
+      {% if appointment.status == 'scheduled' and can_manage_queue %}
+      <button hx-post="{% url 'appointments:status' appointment.pk %}" hx-vals='{"status": "checked_in"}' hx-target="#appointment-row-{{ appointment.pk }}" hx-swap="outerHTML" class="rounded-lg border border-brand-200 px-2.5 py-1.5 text-xs font-semibold text-brand-700 hover:bg-brand-50">Check In</button>
+      <button hx-post="{% url 'appointments:status' appointment.pk %}" hx-vals='{"status": "no_show"}' hx-target="#appointment-row-{{ appointment.pk }}" hx-swap="outerHTML" class="rounded-lg border border-brand-900/10 px-2.5 py-1.5 text-xs font-semibold text-brand-900/50 hover:bg-brand-50">No-show</button>
+      <button hx-post="{% url 'appointments:status' appointment.pk %}" hx-vals='{"status": "cancelled"}' hx-target="#appointment-row-{{ appointment.pk }}" hx-swap="outerHTML" hx-confirm="Cancel this appointment?" class="rounded-lg border border-red-200 px-2.5 py-1.5 text-xs font-semibold text-red-700 hover:bg-red-50">Cancel</button>
+
+      {% elif appointment.status == 'checked_in' %}
+        {% if can_do_clinical %}
+        <a href="{% url 'clinical:consultation' appointment.pk %}" class="rounded-lg border border-accent-200 px-2.5 py-1.5 text-xs font-semibold text-accent-700 hover:bg-accent-50">Start Consultation</a>
+        {% endif %}
+        {% if can_manage_queue %}
+        <button hx-post="{% url 'appointments:status' appointment.pk %}" hx-vals='{"status": "cancelled"}' hx-target="#appointment-row-{{ appointment.pk }}" hx-swap="outerHTML" hx-confirm="Cancel this appointment?" class="rounded-lg border border-red-200 px-2.5 py-1.5 text-xs font-semibold text-red-700 hover:bg-red-50">Cancel</button>
+        {% endif %}
+
+      {% elif appointment.status == 'in_consultation' and can_do_clinical %}
+      <a href="{% url 'clinical:consultation' appointment.pk %}" class="rounded-lg border border-accent-200 px-2.5 py-1.5 text-xs font-semibold text-accent-700 hover:bg-accent-50">Continue Consultation</a>
+
+      {% elif appointment.status == 'completed' %}
+      <a href="{% url 'clinical:prescription_print' appointment.pk %}" target="_blank" class="rounded-lg border border-brand-900/10 px-2.5 py-1.5 text-xs font-semibold text-brand-900/60 hover:bg-brand-50">Print Rx</a>
+      {% endif %}
+    </div>
   </td>
 </tr>

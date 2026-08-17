@@ -5,3 +5,23 @@ FRONT_DESK_ROLES = [User.Role.ADMIN, User.Role.RECEPTIONIST, User.Role.NURSE]
 
 # Can move an appointment through the OPD queue (check-in / start / complete / etc).
 QUEUE_MANAGER_ROLES = [*FRONT_DESK_ROLES, User.Role.DOCTOR]
+
+# Can record a patient's vitals ahead of a consultation.
+VITALS_ROLES = [User.Role.ADMIN, User.Role.NURSE, User.Role.DOCTOR]
+
+# Can write consultation notes, diagnosis, prescriptions and lab orders.
+CLINICAL_ROLES = [User.Role.ADMIN, User.Role.DOCTOR]
+
+# Every hospital-side working role — excludes PATIENT, reserved for the
+# later patient-portal phase. Used for broad read access (e.g. printing a
+# prescription) that isn't sensitive beyond what the viewer's own role
+# already implies access to.
+ALL_STAFF_ROLES = [
+    User.Role.ADMIN,
+    User.Role.DOCTOR,
+    User.Role.NURSE,
+    User.Role.RECEPTIONIST,
+    User.Role.PHARMACIST,
+    User.Role.LAB_TECHNICIAN,
+    User.Role.ACCOUNTANT,
+]

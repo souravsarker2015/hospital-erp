@@ -20,7 +20,7 @@ from apps.appointments.services import (
     transition_status,
 )
 from apps.core.permissions import RoleRequiredMixin, TenantMemberRequiredMixin
-from apps.core.roles import FRONT_DESK_ROLES, QUEUE_MANAGER_ROLES
+from apps.core.roles import CLINICAL_ROLES, FRONT_DESK_ROLES, QUEUE_MANAGER_ROLES, VITALS_ROLES
 from apps.patients.models import Patient
 from apps.users.models import User
 
@@ -58,6 +58,8 @@ class QueueView(TenantMemberRequiredMixin, TemplateView):
             "selected_doctor": doctor_id,
             "can_manage_queue": self.request.user.role in QUEUE_MANAGER_ROLES,
             "can_book": self.request.user.role in FRONT_DESK_ROLES,
+            "can_do_vitals": self.request.user.role in VITALS_ROLES,
+            "can_do_clinical": self.request.user.role in CLINICAL_ROLES,
         }
 
 
@@ -70,7 +72,16 @@ class AppointmentStatusView(RoleRequiredMixin, View):
             transition_status(appointment, request.POST.get("status", ""))
         except SchedulingError:
             pass  # stale double-click on an already-transitioned row; just re-render current state
-        return render(request, "appointments/_queue_row.html", {"appointment": appointment, "can_manage_queue": True})
+        return render(
+            request,
+            "appointments/_queue_row.html",
+            {
+                "appointment": appointment,
+                "can_manage_queue": True,
+                "can_do_vitals": request.user.role in VITALS_ROLES,
+                "can_do_clinical": request.user.role in CLINICAL_ROLES,
+            },
+        )
 
 
 class BookAppointmentView(RoleRequiredMixin, FormView):
