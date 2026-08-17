@@ -60,6 +60,10 @@ class Hospital(models.Model):
     phone_number = models.CharField(max_length=20, blank=True)
     contact_email = models.EmailField()
     timezone = models.CharField(max_length=50, default="UTC")
+    # Per-hospital MRN counter. Shared-schema means there's no native
+    # per-tenant Postgres sequence to lean on, so apps.patients.services
+    # increments this under select_for_update() instead.
+    last_mrn_number = models.PositiveIntegerField(default=0)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     is_active = models.BooleanField(default=True)

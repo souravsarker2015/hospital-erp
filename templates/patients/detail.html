@@ -1,0 +1,76 @@
+{% extends "base_tenant.html" %}
+
+{% block title %}{{ patient.full_name }} — {{ current_hospital.name }}{% endblock %}
+{% block topbar_title %}<h1 class="font-display text-lg font-bold text-brand-950">Patient Profile</h1>{% endblock %}
+
+{% block content %}
+<div x-data="{ tab: 'overview' }">
+  <div class="flex flex-wrap items-start justify-between gap-4">
+    <div class="flex items-center gap-4">
+      <span class="flex h-14 w-14 items-center justify-center rounded-full bg-brand-800 text-lg font-bold text-white">
+        {{ patient.first_name|slice:":1" }}{{ patient.last_name|slice:":1" }}
+      </span>
+      <div>
+        <h2 class="font-display text-2xl font-bold text-brand-950">{{ patient.full_name }}</h2>
+        <p class="mt-1 text-sm text-brand-900/60">
+          MRN <span class="font-mono font-semibold text-brand-700">{{ patient.mrn }}</span>
+          · {% if patient.age %}{{ patient.age }} yrs{% else %}Age unknown{% endif %}
+          · {{ patient.get_gender_display }}
+          · {{ patient.blood_group }}
+        </p>
+      </div>
+    </div>
+    <a href="{% url 'patients:update' patient.pk %}" class="inline-flex items-center gap-2 rounded-lg border border-brand-900/15 px-4 py-2.5 text-sm font-semibold text-brand-900 transition hover:bg-brand-50">
+      <i data-lucide="pencil" class="h-4 w-4"></i>
+      Edit
+    </a>
+  </div>
+
+  {% if patient.allergies %}
+  <div class="mt-4 flex items-start gap-2 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+    <i data-lucide="triangle-alert" class="mt-0.5 h-4 w-4 shrink-0"></i>
+    <span><span class="font-semibold">Allergies:</span> {{ patient.allergies }}</span>
+  </div>
+  {% endif %}
+
+  <div class="mt-8 flex flex-wrap gap-2 border-b border-brand-900/10">
+    <button @click="tab = 'overview'" :class="tab === 'overview' ? 'border-brand-800 text-brand-900' : 'border-transparent text-brand-900/50 hover:text-brand-900'" class="border-b-2 px-3 py-2.5 text-sm font-semibold transition">Overview</button>
+    <button @click="tab = 'visits'" :class="tab === 'visits' ? 'border-brand-800 text-brand-900' : 'border-transparent text-brand-900/50 hover:text-brand-900'" class="border-b-2 px-3 py-2.5 text-sm font-semibold transition">Visit History</button>
+    <button @click="tab = 'prescriptions'" :class="tab === 'prescriptions' ? 'border-brand-800 text-brand-900' : 'border-transparent text-brand-900/50 hover:text-brand-900'" class="border-b-2 px-3 py-2.5 text-sm font-semibold transition">Prescriptions</button>
+    <button @click="tab = 'lab'" :class="tab === 'lab' ? 'border-brand-800 text-brand-900' : 'border-transparent text-brand-900/50 hover:text-brand-900'" class="border-b-2 px-3 py-2.5 text-sm font-semibold transition">Lab Reports</button>
+    <button @click="tab = 'billing'" :class="tab === 'billing' ? 'border-brand-800 text-brand-900' : 'border-transparent text-brand-900/50 hover:text-brand-900'" class="border-b-2 px-3 py-2.5 text-sm font-semibold transition">Billing</button>
+  </div>
+
+  <div x-show="tab === 'overview'" class="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-2">
+    <div class="rounded-2xl border border-brand-900/10 bg-white p-6">
+      <h3 class="font-display text-sm font-bold text-brand-950">Contact</h3>
+      <dl class="mt-4 space-y-3 text-sm">
+        <div class="flex justify-between"><dt class="text-brand-900/50">Phone</dt><dd class="font-medium text-brand-900">{{ patient.phone_number }}</dd></div>
+        <div class="flex justify-between"><dt class="text-brand-900/50">Email</dt><dd class="font-medium text-brand-900">{{ patient.email|default:"—" }}</dd></div>
+        <div class="flex justify-between gap-4"><dt class="shrink-0 text-brand-900/50">Address</dt><dd class="text-right font-medium text-brand-900">{{ patient.address|default:"—"|linebreaksbr }}</dd></div>
+      </dl>
+    </div>
+    <div class="rounded-2xl border border-brand-900/10 bg-white p-6">
+      <h3 class="font-display text-sm font-bold text-brand-950">Emergency Contact</h3>
+      <dl class="mt-4 space-y-3 text-sm">
+        <div class="flex justify-between"><dt class="text-brand-900/50">Name</dt><dd class="font-medium text-brand-900">{{ patient.emergency_contact_name|default:"—" }}</dd></div>
+        <div class="flex justify-between"><dt class="text-brand-900/50">Phone</dt><dd class="font-medium text-brand-900">{{ patient.emergency_contact_phone|default:"—" }}</dd></div>
+        <div class="flex justify-between"><dt class="text-brand-900/50">Relation</dt><dd class="font-medium text-brand-900">{{ patient.emergency_contact_relation|default:"—" }}</dd></div>
+      </dl>
+    </div>
+    <div class="rounded-2xl border border-brand-900/10 bg-white p-6 lg:col-span-2">
+      <h3 class="font-display text-sm font-bold text-brand-950">Registration</h3>
+      <dl class="mt-4 grid grid-cols-2 gap-3 text-sm sm:grid-cols-3">
+        <div><dt class="text-brand-900/50">Date of birth</dt><dd class="mt-0.5 font-medium text-brand-900">{{ patient.date_of_birth|date:"M j, Y"|default:"—" }}</dd></div>
+        <div><dt class="text-brand-900/50">Registered</dt><dd class="mt-0.5 font-medium text-brand-900">{{ patient.created_at|date:"M j, Y" }}</dd></div>
+        <div><dt class="text-brand-900/50">Blood group</dt><dd class="mt-0.5 font-medium text-brand-900">{{ patient.blood_group }}</dd></div>
+      </dl>
+    </div>
+  </div>
+
+  <div x-show="tab === 'visits'" x-cloak class="mt-6">{% include "patients/_empty_tab.html" with icon="calendar-clock" text="Visit history will appear here once the Appointments & OPD module ships." %}</div>
+  <div x-show="tab === 'prescriptions'" x-cloak class="mt-6">{% include "patients/_empty_tab.html" with icon="stethoscope" text="Prescriptions will appear here once the Clinical module ships." %}</div>
+  <div x-show="tab === 'lab'" x-cloak class="mt-6">{% include "patients/_empty_tab.html" with icon="flask-conical" text="Lab reports will appear here once the Lab & Diagnostics module ships." %}</div>
+  <div x-show="tab === 'billing'" x-cloak class="mt-6">{% include "patients/_empty_tab.html" with icon="receipt" text="Invoices will appear here once the Billing module ships." %}</div>
+</div>
+{% endblock %}

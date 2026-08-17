@@ -1,0 +1,29 @@
+{% extends "base_tenant.html" %}
+
+{% block title %}Patients — {{ current_hospital.name }}{% endblock %}
+{% block topbar_title %}<h1 class="font-display text-lg font-bold text-brand-950">Patients</h1>{% endblock %}
+
+{% block content %}
+<div class="flex flex-wrap items-center justify-between gap-4">
+  <div>
+    <h2 class="font-display text-2xl font-bold text-brand-950">Patients</h2>
+    <p class="mt-1 text-sm text-brand-900/60">{{ paginator.count }} patient{{ paginator.count|pluralize }} registered</p>
+  </div>
+  {% if can_register %}
+  <a href="{% url 'patients:create' %}" class="inline-flex items-center gap-2 rounded-lg bg-accent-500 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-accent-600">
+    <i data-lucide="user-plus" class="h-4 w-4"></i>
+    Register Patient
+  </a>
+  {% endif %}
+</div>
+
+<input
+  type="search" name="q" value="{{ current_q }}" placeholder="Search by name, phone or MRN"
+  hx-get="{% url 'patients:list' %}" hx-trigger="keyup changed delay:400ms, search"
+  hx-target="#patient-table" hx-push-url="true"
+  class="mt-6 w-full max-w-md" />
+
+<div id="patient-table" class="mt-6">
+  {% include "patients/_patient_table.html" %}
+</div>
+{% endblock %}
