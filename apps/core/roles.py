@@ -15,6 +15,9 @@ CLINICAL_ROLES = [User.Role.ADMIN, User.Role.DOCTOR]
 # Can manage the drug catalog, receive stock, and dispense against prescriptions.
 PHARMACY_ROLES = [User.Role.ADMIN, User.Role.PHARMACIST]
 
+# Can manage the test catalog, collect samples, and enter lab results.
+LAB_ROLES = [User.Role.ADMIN, User.Role.LAB_TECHNICIAN]
+
 # Every hospital-side working role — excludes PATIENT, reserved for the
 # later patient-portal phase. Used for broad read access (e.g. printing a
 # prescription) that isn't sensitive beyond what the viewer's own role

@@ -1,0 +1,70 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8" />
+<style>
+  @page { size: A4; margin: 2cm; }
+  body { font-family: Helvetica, Arial, sans-serif; font-size: 11pt; color: #1f2937; }
+  h1 { font-size: 16pt; margin: 0; color: #0A2B28; }
+  .muted { color: #6b7280; font-size: 9pt; }
+  .header-table { width: 100%; border-bottom: 2px solid #0A2B28; padding-bottom: 10px; margin-bottom: 16px; }
+  .info-table { width: 100%; margin-bottom: 16px; }
+  .info-table td { padding: 3px 0; font-size: 10pt; }
+  .label { color: #6b7280; width: 30%; }
+  .result-box { border: 1px solid #d1d5db; padding: 14px; margin-top: 10px; }
+  .result-title { font-size: 9pt; color: #6b7280; text-transform: uppercase; }
+  .result-value { font-size: 20pt; font-weight: bold; margin-top: 4px; }
+  .abnormal { color: #b91c1c; }
+  .normal { color: #065f46; }
+  .footer { margin-top: 40px; font-size: 9pt; color: #6b7280; }
+  table.meta { width: 100%; }
+  table.meta td { vertical-align: top; }
+</style>
+</head>
+<body>
+  <table class="header-table">
+    <tr>
+      <td><h1>{{ order.hospital.name }}</h1><p class="muted">{{ order.hospital.address }}</p></td>
+      <td align="right" class="muted">
+        Report Date: {{ result.result_entered_at|date:"M j, Y" }}<br/>
+        Order Date: {{ order.created_at|date:"M j, Y" }}
+      </td>
+    </tr>
+  </table>
+
+  <table class="info-table meta">
+    <tr>
+      <td class="label">Patient</td><td>{{ order.consultation.appointment.patient.full_name }}</td>
+      <td class="label">MRN</td><td>{{ order.consultation.appointment.patient.mrn }}</td>
+    </tr>
+    <tr>
+      <td class="label">Age / Gender</td>
+      <td>{% if order.consultation.appointment.patient.age %}{{ order.consultation.appointment.patient.age }} yrs{% else %}—{% endif %} / {{ order.consultation.appointment.patient.get_gender_display }}</td>
+      <td class="label">Ordering Doctor</td><td>Dr. {{ order.consultation.appointment.doctor.get_full_name|default:order.consultation.appointment.doctor.username }}</td>
+    </tr>
+  </table>
+
+  <h2 style="font-size: 13pt; color: #0A2B28;">{{ result.test.name }}</h2>
+  {% if result.test.sample_type %}<p class="muted">Sample type: {{ result.test.get_sample_type_display }}</p>{% endif %}
+
+  <div class="result-box">
+    <p class="result-title">Result</p>
+    <p class="result-value {% if result.is_abnormal %}abnormal{% else %}normal{% endif %}">
+      {{ result.result_value }}{% if result.test.unit %} {{ result.test.unit }}{% endif %}
+      {% if result.is_abnormal %} (Abnormal){% endif %}
+    </p>
+    {% if result.test.reference_range %}<p class="muted">Reference range: {{ result.test.reference_range }}{% if result.test.unit %} {{ result.test.unit }}{% endif %}</p>{% endif %}
+  </div>
+
+  {% if result.result_notes %}
+  <p style="margin-top: 14px;"><b>Notes:</b> {{ result.result_notes }}</p>
+  {% endif %}
+
+  <table class="footer" style="width: 100%; margin-top: 50px;">
+    <tr>
+      <td>Sample collected: {{ result.sample_collected_at|date:"M j, Y g:i A" }}</td>
+      <td align="right">Verified by: {{ result.result_entered_by.get_full_name|default:result.result_entered_by.username }}</td>
+    </tr>
+  </table>
+</body>
+</html>

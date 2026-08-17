@@ -1,0 +1,38 @@
+{% extends "base_tenant.html" %}
+
+{% block title %}{% if object %}Edit {{ object.name }}{% else %}Add Test{% endif %} — {{ current_hospital.name }}{% endblock %}
+{% block topbar_title %}<h1 class="font-display text-lg font-bold text-brand-950">{% if object %}Edit Test{% else %}Add Test{% endif %}</h1>{% endblock %}
+
+{% block content %}
+<div class="mx-auto max-w-xl">
+  <div class="rounded-2xl border border-brand-900/10 bg-white p-8">
+    <h2 class="font-display text-xl font-bold text-brand-950">{% if object %}Edit {{ object.name }}{% else %}Add a test to the catalog{% endif %}</h2>
+
+    {% if form.non_field_errors %}
+    <div class="mt-6 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+      {% for error in form.non_field_errors %}<p>{{ error }}</p>{% endfor %}
+    </div>
+    {% endif %}
+
+    <form method="post" class="mt-6 space-y-4">
+      {% csrf_token %}
+      <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+        {% include "components/form_field.html" with field=form.name %}
+        {% include "components/form_field.html" with field=form.code %}
+      </div>
+      {% include "components/form_field.html" with field=form.sample_type %}
+      <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+        {% include "components/form_field.html" with field=form.unit %}
+        {% include "components/form_field.html" with field=form.reference_range %}
+      </div>
+
+      <div class="flex items-center gap-3 border-t border-brand-900/10 pt-6">
+        <button type="submit" class="rounded-lg bg-accent-500 px-5 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-accent-600">
+          {% if object %}Save changes{% else %}Add test{% endif %}
+        </button>
+        <a href="{% url 'lab:test_list' %}" class="text-sm font-semibold text-brand-900/60 hover:text-brand-900">Cancel</a>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

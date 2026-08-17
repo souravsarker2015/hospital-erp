@@ -1,0 +1,31 @@
+{% extends "base_tenant.html" %}
+
+{% block title %}Sample Queue — {{ current_hospital.name }}{% endblock %}
+{% block topbar_title %}<h1 class="font-display text-lg font-bold text-brand-950">Sample Queue</h1>{% endblock %}
+
+{% block content %}
+<div>
+  <h2 class="font-display text-2xl font-bold text-brand-950">Sample Queue</h2>
+  <p class="mt-1 text-sm text-brand-900/60">Tests ordered from consultations, across every appointment status.</p>
+</div>
+
+<form class="mt-6 flex flex-wrap gap-3">
+  <input
+    type="search" name="q" value="{{ current_q }}" placeholder="Search by test or patient"
+    hx-get="{% url 'lab:queue' %}" hx-trigger="keyup changed delay:400ms, search"
+    hx-target="#lab-table" hx-push-url="true" hx-include="closest form"
+    class="min-w-[16rem] flex-1" />
+  <select
+    name="status"
+    hx-get="{% url 'lab:queue' %}" hx-trigger="change" hx-target="#lab-table" hx-push-url="true" hx-include="closest form">
+    <option value="pending" {% if current_status == "pending" %}selected{% endif %}>Pending Collection</option>
+    <option value="collected" {% if current_status == "collected" %}selected{% endif %}>Sample Collected</option>
+    <option value="done" {% if current_status == "done" %}selected{% endif %}>Result Entered</option>
+    <option value="all" {% if current_status == "all" %}selected{% endif %}>All</option>
+  </select>
+</form>
+
+<div id="lab-table" class="mt-6">
+  {% include "lab/_queue_table.html" %}
+</div>
+{% endblock %}

@@ -1,0 +1,35 @@
+{% extends "base_tenant.html" %}
+
+{% block title %}Lab — {{ current_hospital.name }}{% endblock %}
+{% block topbar_title %}<h1 class="font-display text-lg font-bold text-brand-950">Lab</h1>{% endblock %}
+
+{% block content %}
+<div class="flex flex-wrap items-center justify-between gap-4">
+  <div>
+    <h2 class="font-display text-2xl font-bold text-brand-950">Test Catalog</h2>
+    <p class="mt-1 text-sm text-brand-900/60">{{ paginator.count }} test{{ paginator.count|pluralize }} available</p>
+  </div>
+  <div class="flex items-center gap-3">
+    <a href="{% url 'lab:queue' %}" class="inline-flex items-center gap-2 rounded-lg border border-brand-900/15 px-4 py-2.5 text-sm font-semibold text-brand-900 transition hover:bg-brand-50">
+      <i data-lucide="clipboard-list" class="h-4 w-4"></i>
+      Sample Queue
+    </a>
+    {% if can_manage %}
+    <a href="{% url 'lab:test_create' %}" class="inline-flex items-center gap-2 rounded-lg bg-accent-500 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-accent-600">
+      <i data-lucide="plus" class="h-4 w-4"></i>
+      Add Test
+    </a>
+    {% endif %}
+  </div>
+</div>
+
+<input
+  type="search" name="q" value="{{ current_q }}" placeholder="Search by test name or code"
+  hx-get="{% url 'lab:test_list' %}" hx-trigger="keyup changed delay:400ms, search"
+  hx-target="#test-table" hx-push-url="true"
+  class="mt-6 w-full max-w-md" />
+
+<div id="test-table" class="mt-6">
+  {% include "lab/_test_table.html" %}
+</div>
+{% endblock %}

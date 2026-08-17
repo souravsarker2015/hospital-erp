@@ -1,0 +1,35 @@
+{% extends "base_tenant.html" %}
+
+{% block title %}Collect Sample — {{ order.consultation.appointment.patient.full_name }}{% endblock %}
+{% block topbar_title %}<h1 class="font-display text-lg font-bold text-brand-950">Collect Sample</h1>{% endblock %}
+
+{% block content %}
+<div class="mx-auto max-w-lg">
+  <div class="rounded-2xl border border-brand-900/10 bg-white p-8">
+    <p class="text-xs font-semibold uppercase tracking-widest text-brand-900/40">
+      {{ order.consultation.appointment.patient.full_name }} · {{ order.consultation.appointment.patient.mrn }}
+    </p>
+    <h2 class="mt-1 font-display text-xl font-bold text-brand-950">{{ order.test_name }}</h2>
+    {% if order.notes %}<p class="mt-1 text-sm text-brand-900/60">{{ order.notes }}</p>{% endif %}
+
+    {% if form.non_field_errors %}
+    <div class="mt-6 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+      {% for error in form.non_field_errors %}<p>{{ error }}</p>{% endfor %}
+    </div>
+    {% endif %}
+
+    <form method="post" class="mt-6 space-y-4">
+      {% csrf_token %}
+      {% include "components/form_field.html" with field=form.test %}
+      <p class="text-xs text-brand-900/40">Match this order to the catalog test so the report is generated with the right reference range.</p>
+
+      <div class="flex items-center gap-3 border-t border-brand-900/10 pt-6">
+        <button type="submit" class="rounded-lg bg-accent-500 px-5 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-accent-600">
+          Mark sample collected
+        </button>
+        <a href="{% url 'lab:queue' %}" class="text-sm font-semibold text-brand-900/60 hover:text-brand-900">Cancel</a>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

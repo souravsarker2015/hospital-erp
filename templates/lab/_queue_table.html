@@ -1,0 +1,61 @@
+<div class="overflow-x-auto rounded-2xl border border-brand-900/10 bg-white">
+  <table class="min-w-full divide-y divide-brand-900/10 text-sm">
+    <thead class="bg-brand-50/60">
+      <tr>
+        <th class="px-4 py-3 text-left font-semibold text-brand-900/70">Patient</th>
+        <th class="px-4 py-3 text-left font-semibold text-brand-900/70">Test Ordered</th>
+        <th class="px-4 py-3 text-left font-semibold text-brand-900/70">Doctor</th>
+        <th class="px-4 py-3 text-left font-semibold text-brand-900/70">Status</th>
+        <th class="px-4 py-3 text-right font-semibold text-brand-900/70">Actions</th>
+      </tr>
+    </thead>
+    <tbody class="divide-y divide-brand-900/5">
+      {% for order in orders %}
+      <tr class="hover:bg-brand-50/40">
+        <td class="px-4 py-3">
+          <a href="{% url 'patients:detail' order.consultation.appointment.patient.pk %}" class="font-medium text-brand-950 hover:underline">{{ order.consultation.appointment.patient.full_name }}</a>
+          <p class="text-xs text-brand-900/40">{{ order.consultation.appointment.patient.mrn }}</p>
+        </td>
+        <td class="px-4 py-3 font-medium text-brand-900">{{ order.test_name }}{% if order.notes %}<p class="text-xs text-brand-900/40">{{ order.notes }}</p>{% endif %}</td>
+        <td class="px-4 py-3 text-brand-900/70">Dr. {{ order.consultation.appointment.doctor.get_full_name|default:order.consultation.appointment.doctor.username }}</td>
+        <td class="px-4 py-3">
+          {% if order.lab_result.sample_status == "result_entered" %}
+          <span class="rounded-full bg-emerald-100 px-2.5 py-1 text-xs font-semibold text-emerald-700">Result entered{% if order.lab_result.is_abnormal %} · Abnormal{% endif %}</span>
+          {% elif order.lab_result.sample_status == "collected" %}
+          <span class="rounded-full bg-accent-100 px-2.5 py-1 text-xs font-semibold text-accent-700">Sample collected</span>
+          {% else %}
+          <span class="rounded-full bg-brand-100 px-2.5 py-1 text-xs font-semibold text-brand-700">Pending collection</span>
+          {% endif %}
+        </td>
+        <td class="px-4 py-3 text-right">
+          {% if order.lab_result.sample_status == "result_entered" %}
+          <a href="{% url 'lab:report_pdf' order.pk %}" target="_blank" class="rounded-lg border border-brand-900/10 px-2.5 py-1.5 text-xs font-semibold text-brand-900/60 hover:bg-brand-50">View Report</a>
+          {% elif can_manage and order.lab_result.sample_status == "collected" %}
+          <a href="{% url 'lab:enter_result' order.pk %}" class="rounded-lg bg-accent-500 px-2.5 py-1.5 text-xs font-semibold text-white hover:bg-accent-600">Enter Result</a>
+          {% elif can_manage %}
+          <a href="{% url 'lab:collect_sample' order.pk %}" class="rounded-lg border border-brand-200 px-2.5 py-1.5 text-xs font-semibold text-brand-700 hover:bg-brand-50">Collect Sample</a>
+          {% else %}
+          <span class="text-xs text-brand-900/30">—</span>
+          {% endif %}
+        </td>
+      </tr>
+      {% empty %}
+      <tr><td colspan="5" class="px-4 py-10 text-center text-brand-900/40">Nothing here.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+{% if is_paginated %}
+<div class="mt-4 flex items-center justify-between text-sm text-brand-900/60">
+  <span>Page {{ page_obj.number }} of {{ paginator.num_pages }}</span>
+  <div class="flex gap-2">
+    {% if page_obj.has_previous %}
+    <button hx-get="{% url 'lab:queue' %}?page={{ page_obj.previous_page_number }}&q={{ current_q|urlencode }}&status={{ current_status|urlencode }}" hx-target="#lab-table" hx-push-url="true" class="rounded-lg border border-brand-900/15 px-3 py-1.5 font-semibold transition hover:bg-brand-50">Previous</button>
+    {% endif %}
+    {% if page_obj.has_next %}
+    <button hx-get="{% url 'lab:queue' %}?page={{ page_obj.next_page_number }}&q={{ current_q|urlencode }}&status={{ current_status|urlencode }}" hx-target="#lab-table" hx-push-url="true" class="rounded-lg border border-brand-900/15 px-3 py-1.5 font-semibold transition hover:bg-brand-50">Next</button>
+    {% endif %}
+  </div>
+</div>
+{% endif %}
